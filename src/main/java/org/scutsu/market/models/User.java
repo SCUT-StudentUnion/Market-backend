@@ -2,40 +2,25 @@ package org.scutsu.market.models;
 
 import lombok.Data;
 
-import org.scutsu.market.models.Goods;
-
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
 public class User {
+	@OneToMany(mappedBy = "releasedBy")
+	List<Goods> releasedGoods = new ArrayList<>();
+	@ManyToMany
+	List<Goods> collectedGoods = new ArrayList<>();
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
 	@NotNull
-	@Column(nullable=false)
-	private String WeChatOpenId;
-	
+	@Column(nullable = false)
+	private String weChatOpenId;
 	@NotNull
-	@Column(nullable=false)
-	private String TelephoneNumber;
-	
-	@OneToMany
-	List<Goods> UserReleaseGoodsList=new ArrayList<>();
-	
-	@OneToMany
-	List<Goods> UserCollectGoodsList=new ArrayList<>();
-	
-	public void setWeChatOpenId(String s) {
-		this.WeChatOpenId=s;
-	}
-
-	public void setTelephoneNumber(String s) {
-		this.TelephoneNumber=s;
-	}
-
+	@Column(nullable = false)
+	private String telephoneNumber;
 }

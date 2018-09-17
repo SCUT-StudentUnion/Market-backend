@@ -14,10 +14,11 @@ public class MarketApplicationTests {
 
 	@Autowired
 	UserRepository userRepository;
+
 	@Test
 	public void contextLoads() {
-	
-		User user=new User();
+
+		User user = new User();
 		user.setWeChatOpenId("123");
 		user.setTelephoneNumber("1234");
 		userRepository.save(user);
