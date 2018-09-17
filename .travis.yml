@@ -6,5 +6,16 @@ dist: trusty
 jdk:
 - openjdk8
 cache:
-  directories:
-  - "$HOME/.m2"
+    directories:
+    - "$HOME/.m2"
+
+install:
+script:
+- ./mvnw package -B -DskipTests=true
+
+deploy:
+- provider: script
+  skip_cleanup: true
+  script: ./deploy.sh
+  on:
+      branch: "master"
