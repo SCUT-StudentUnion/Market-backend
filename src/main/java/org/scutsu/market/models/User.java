@@ -7,16 +7,35 @@ import org.scutsu.market.models.Goods;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
-import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Data
-public class User extends UserInfo {
+public class User {
+	@Id
+	@GeneratedValue
+	private Long id;
+	
+	@NotNull
+	@Column(nullable=false)
+	private String WeChatOpenId;
+	
+	@NotNull
+	@Column(nullable=false)
+	private String TelephoneNumber;
 	
 	@OneToMany
-	private List<Goods> UserReleaseGoodsList=new ArrayList<>();
+	List<Goods> UserReleaseGoodsList=new ArrayList<>();
 	
 	@OneToMany
-	private List<Goods> UserCollectGoodsList=new ArrayList<>();
+	List<Goods> UserCollectGoodsList=new ArrayList<>();
 	
+	public void setWeChatOpenId(String s) {
+		this.WeChatOpenId=s;
+	}
+
+	public void setTelephoneNumber(String s) {
+		this.TelephoneNumber=s;
+	}
+
 }
