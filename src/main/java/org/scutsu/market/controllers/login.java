@@ -34,7 +34,7 @@ public class login {
 	}
 
 	//第一次登录，在数据库中创建一个用户
-    //已经有过登录，把User中的数据返回给小程序
+    //已经有过登录，把USER中的数据返回给小程序
     @PostMapping("/login")
     public String Login(String code) {
 		//url需根据小程序自定义
