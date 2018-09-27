@@ -23,4 +23,44 @@ public class User {
 	@NotNull
 	@Column(nullable = false)
 	private String telephoneNumber;
+
+	public List<Goods> getReleasedGoods() {
+		return releasedGoods;
+	}
+
+	public void setReleasedGoods(List<Goods> releasedGoods) {
+		this.releasedGoods = releasedGoods;
+	}
+
+	public List<Goods> getCollectedGoods() {
+		return collectedGoods;
+	}
+
+	public void setCollectedGoods(List<Goods> collectedGoods) {
+		this.collectedGoods = collectedGoods;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getWeChatOpenId() {
+		return weChatOpenId;
+	}
+
+	public void setWeChatOpenId(String weChatOpenId) {
+		this.weChatOpenId = weChatOpenId;
+	}
+
+	public String getTelephoneNumber() {
+		return telephoneNumber;
+	}
+
+	public void setTelephoneNumber(String telephoneNumber) {
+		this.telephoneNumber = telephoneNumber;
+	}
 }
