@@ -31,11 +31,11 @@ public class Goods {
 	private Byte[] photo2;
 
 	@NotNull
-	@Column(length = 24)
+	@Column(length = 8)
 	private String buyingPrice;
 
 	@NotNull
-	@Column(length = 24)
+	@Column(length = 8)
 	private String sellingPrice;
 
 	@ManyToOne

@@ -1,6 +1,8 @@
 package org.scutsu.market.security;
 
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +12,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
@@ -24,9 +27,13 @@ public class JwtTokenProvider {
     private int jwtExpirationInMs;
 
 	
-	public String generateToken(Authentication authentication) {
-		
-		return null;
+	public String generateToken(Long Id) {
+        
+        return Jwts.builder()
+                .setSubject(Long.toString(Id))
+                .setIssuedAt(new Date())
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
 	}
 	
 	
