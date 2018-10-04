@@ -4,6 +4,9 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -17,26 +20,18 @@ public class Goods {
 	@Column(length = 45)
 	private String title;
 
-	@NotNull
 	@Column(length = 150)
 	private String detail;
 
-	@Column(nullable = false)
-	private String tag;
+	@OneToMany
+	List<Photo> photos = new ArrayList<>();
+	@ManyToOne
+	private Category category;
+	@Column(precision = 12, scale = 2)
+	private BigDecimal buyingPrice;
 
-	@Lob
-	private Byte[] photo1;
-
-	@Lob
-	private Byte[] photo2;
-
-	@NotNull
-	@Column(length = 24)
-	private String buyingPrice;
-
-	@NotNull
-	@Column(length = 24)
-	private String sellingPrice;
+	@Column(precision = 12, scale = 2)
+	private BigDecimal sellingPrice;
 
 	@ManyToOne
 	private User releasedBy;

@@ -1,0 +1,153 @@
+databaseChangeLog:
+- changeSet:
+      id: 1
+      author: huww98
+      changes:
+      - createTable:
+            tableName: category
+            columns:
+            - column:
+                  name: id
+                  type: bigint(20)
+                  autoIncrement: true
+                  constraints:
+                      primaryKey: true
+                      nullable: false
+            - column:
+                  name: name
+                  type: varchar(45)
+                  constraints:
+                      nullable: false
+      - createTable:
+            tableName: user
+            columns:
+            - column:
+                  name: id
+                  type: bigint(20)
+                  autoIncrement: true
+                  constraints:
+                      primaryKey: true
+                      nullable: false
+            - column:
+                  name: we_chat_open_id
+                  type: varchar(255)
+            - column:
+                  name: telephone_number
+                  type: varchar(20)
+      - createTable:
+            tableName: goods
+            columns:
+            - column:
+                  name: id
+                  type: bigint(20)
+                  autoIncrement: true
+                  constraints:
+                      primaryKey: true
+                      nullable: false
+            - column:
+                  name: title
+                  type: varchar(45)
+                  constraints:
+                      nullable: false
+            - column:
+                  name: detail
+                  type: varchar(150)
+            - column:
+                  name: buying_price
+                  type: decimal(12,2)
+            - column:
+                  name: selling_price
+                  type: decimal(12,2)
+            - column:
+                  name: category_id
+                  type: bigint(20)
+                  constraints:
+                      foreignKeyName: fk_goods_category
+                      references: category(id)
+            - column:
+                  name: released_by_id
+                  type: bigint(20)
+                  constraints:
+                      foreignKeyName: fk_goods_released_by
+                      references: user(id)
+      - createTable:
+            tableName: photo
+            columns:
+            - column:
+                  name: id
+                  type: bigint(20)
+                  autoIncrement: true
+                  constraints:
+                      primaryKey: true
+                      nullable: false
+            - column:
+                  name: uri
+                  type: varchar(255)
+                  constraints:
+                      nullable: false
+      - createTable:
+            tableName: goods-photos
+            columns:
+            - column:
+                  name: photos_id
+                  type: bigint(20)
+                  constraints:
+                      unique: true
+                      nullable: false
+                      foreignKeyName: fk_goods_photos_photo
+                      references: photo(id)
+            - column:
+                  name: goods_id
+                  type: bigint(20)
+                  constraints:
+                      nullable: false
+                      foreignKeyName: fk_goods_photos_goods
+                      references: goods(id)
+      - createTable:
+            tableName: user_comment
+            columns:
+            - column:
+                  name: id
+                  type: bigint(20)
+                  autoIncrement: true
+                  constraints:
+                      primaryKey: true
+                      nullable: false
+            - column:
+                  name: comment
+                  type: varchar(210)
+                  constraints:
+                      nullable: false
+            - column:
+                  name: date
+                  type: datetime(6)
+                  constraints:
+                      nullable: false
+            - column:
+                  name: goods_id
+                  type: bigint(20)
+                  constraints:
+                      nullable: false
+                      foreignKeyName: fk_comment_goods
+                      references: goods(id)
+            - column:
+                  name: user_id
+                  type: bigint(20)
+                  constraints:
+                      foreignKeyName: fk_comment_user
+                      references: user(id)
+      - createTable:
+            tableName: user_collected_goods
+            columns:
+            - column:
+                  name: user_id
+                  type: bigint(20)
+                  constraints:
+                      foreignKeyName: fk_user_collected_goods_user
+                      references: user(id)
+            - column:
+                  name: collected_goods_id
+                  type: bigint(20)
+                  constraints:
+                      foreignKeyName: fk_user_collected_goods_goods
+                      references: goods(id)
