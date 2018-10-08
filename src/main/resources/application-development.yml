@@ -8,5 +8,5 @@ spring:
         hibernate:
             ddl-auto: create
         security:
-	        jwtSecret: scutsuntt
-	        jwtExpirationInMs:
+            jwtSecret: scutsuntt
+            jwtExpirationInMs:
