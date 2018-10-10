@@ -19,5 +19,6 @@ public class User {
 	private Long id;
 	@NotNull
 	@Column(nullable = false)
+	@OneToOne
 	private String weChatOpenId;
 }

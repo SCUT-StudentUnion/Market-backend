@@ -10,3 +10,7 @@ spring:
         security:
             jwtSecret: scutsuntt
             jwtExpirationInMs:
+app:
+    appid:
+    secret:
+    grant_type:
