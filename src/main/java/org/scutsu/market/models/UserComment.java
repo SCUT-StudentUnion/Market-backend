@@ -3,6 +3,7 @@ package org.scutsu.market.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -20,9 +21,11 @@ public class UserComment {
 	@Column(nullable = false)
 	private Date date;
 
+	@NotNull
 	@ManyToOne
 	private Goods goods;
 
+	@NotNull
 	@ManyToOne
 	private User user;
 }
