@@ -7,10 +7,8 @@ spring:
         show-sql: true
         hibernate:
             ddl-auto: create
-        security:
-            jwtSecret: scutsuntt
-            jwtExpirationInMs:
-app:
-    appid:
+we-chat:
+    app-id:
     secret:
-    grant_type:
+jwt:
+    secret:
