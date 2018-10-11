@@ -23,6 +23,5 @@ public class User {
 
 	@NotNull
 	@Column(nullable = false)
-	@OneToOne
 	private String weChatOpenId;
 }

@@ -25,8 +25,10 @@ public class Goods {
 
 	@OneToMany
 	List<Photo> photos = new ArrayList<>();
+
 	@ManyToOne
 	private Category category;
+
 	@Column(precision = 12, scale = 2)
 	private BigDecimal buyingPrice;
 

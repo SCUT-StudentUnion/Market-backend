@@ -25,3 +25,4 @@
 /.nb-gradle/
 
 /bin
+application-secret-local.yml
