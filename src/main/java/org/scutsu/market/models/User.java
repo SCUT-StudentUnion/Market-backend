@@ -24,8 +24,4 @@ public class User {
 	@NotNull
 	@Column(nullable = false)
 	private String weChatOpenId;
-
-	@NotNull
-	@Column(nullable = false)
-	private String telephoneNumber;
 }

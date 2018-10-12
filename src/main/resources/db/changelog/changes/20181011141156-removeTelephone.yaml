@@ -1,0 +1,8 @@
+databaseChangeLog:
+- changeSet:
+      id: 1
+      author: huww98
+      changes:
+      - dropColumn:
+            tableName: user
+            columnName: telephone_number
