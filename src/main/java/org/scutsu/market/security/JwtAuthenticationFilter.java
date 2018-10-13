@@ -15,6 +15,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
 	private final JwtTokenProvider tokenProvider;
 
 	@Autowired
@@ -27,8 +28,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		try {
 			String jwt = getJwtFromRequest(request);
 
-			if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+			if (!StringUtils.hasText(jwt)) {
+				log.info("jwt not found");
+			} else if (!tokenProvider.validateToken(jwt)) {
+				log.info("jwt not valid");
+			} else {
 				Long userId = tokenProvider.getUserIdFromJWT(jwt);
+				log.info("jwt authenticate successful. userId: " + userId);
 			}
 		} catch (Exception ex) {
 			log.error("Could not set user authentication in security context", ex);

@@ -61,7 +61,7 @@ class CodeToSessionResult {
 	private final String unionId;
 	@JsonProperty("errcode")
 	private final int errorCode;
-	@JsonProperty("errMsg")
+	@JsonProperty("errmsg")
 	private final String errorMessage;
 
 	boolean isSuccess() {
