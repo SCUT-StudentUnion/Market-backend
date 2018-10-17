@@ -15,6 +15,9 @@ spring:
 jwt:
     secret: scutsu-market-develop-jwt-secret
 
+upload:
+    dir:
+
 # uncomment the following lines to let hibernate generate database tables
 #spring.jpa.hibernate.ddl-auto: create
 #spring.liquibase.enabled: false
