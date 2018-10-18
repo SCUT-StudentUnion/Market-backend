@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,15 @@ public class Goods {
 	@Column(precision = 12, scale = 2)
 	private BigDecimal sellingPrice;
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private User releasedBy;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private GoodsStatus status;
+
+	@NotNull
+	private OffsetDateTime createdTime;
+
+	private OffsetDateTime onShelfTime;
 }
