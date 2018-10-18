@@ -16,7 +16,7 @@ jwt:
     secret: scutsu-market-develop-jwt-secret
 
 upload:
-    dir:
+    uri:
 
 # uncomment the following lines to let hibernate generate database tables
 #spring.jpa.hibernate.ddl-auto: create

@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class UploadResult {
 	
-	private final String savePath;
+	private final String photo_uri;
 }
