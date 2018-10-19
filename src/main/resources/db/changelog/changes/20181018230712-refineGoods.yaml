@@ -1,0 +1,47 @@
+databaseChangeLog:
+- changeSet:
+      id: 1
+      author: huww98
+      changes:
+      - addColumn:
+            tableName: goods
+            columns:
+            - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                      nullable: false
+- changeSet:
+      id: 2
+      author: huww98
+      changes:
+      - addNotNullConstraint:
+            tableName: goods
+            columnName: released_by_id
+            columnDataType: bigint(20)
+            defaultNullValue: pendingAudit
+- changeSet:
+      id: 3
+      author: huww98
+      changes:
+      - renameTable:
+            oldTableName: goods-photos
+            newTableName: goods_photos
+- changeSet:
+      id: 4
+      author: huww98
+      changes:
+      - addColumn:
+            tableName: goods
+            columns:
+            - column:
+                  name: created_time
+                  type: datetime(3)
+                  constraints:
+                      nullable: false
+      - addColumn:
+            tableName: goods
+            columns:
+            - column:
+                  name: on_shelf_time
+                  type: datetime(3)
