@@ -17,6 +17,7 @@ import org.scutsu.market.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,21 +29,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-@ConfigurationProperties(prefix = "we-chat")
-@Validated
-@Component
-@Data
-class WeChatProperties {
-
-	@NotNull
-	private String appId;
-
-	@NotNull
-	private String secret;
-
-	@NotNull
-	private String grantType = "authorization_code";
-}
 
 @Data
 class LoginResult {
