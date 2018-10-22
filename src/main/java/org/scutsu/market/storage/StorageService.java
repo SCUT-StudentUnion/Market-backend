@@ -1,22 +1,13 @@
 package org.scutsu.market.storage;
 
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
-import java.util.stream.Stream;
+import java.io.IOException;
 
 public interface StorageService {
-
-    void init();
-
-    UploadResult store(MultipartFile file);
-
-    Stream<Path> loadAll();
-
-    Path load(String filename);
-
-    String loadAsResource(String filename);
-
-    void deleteAll();
+	
+    public UploadResult store(MultipartFile file);
+    public Resource loadAsResource(String filename) throws IOException;
 
 }

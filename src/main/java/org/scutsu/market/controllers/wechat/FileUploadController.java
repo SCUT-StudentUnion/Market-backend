@@ -1,5 +1,7 @@
 package org.scutsu.market.controllers.wechat;
 
+import java.io.IOException;
+
 import org.scutsu.market.repositories.PhotoRepository;
 import org.scutsu.market.storage.StorageService;
 import org.scutsu.market.storage.StorageServiceUnit;
@@ -33,12 +35,12 @@ public class FileUploadController {
 	}
 	
 	@GetMapping("/files/{id}")
-	public ResponseEntity<String> ServeFile(@PathVariable Long id) {
+	public ResponseEntity<Resource> ServeFile(@PathVariable Long id) throws IOException{
 		
 		String filename=photoRepository.findById(id).get().getFileName();
-		String uri = storageService.loadAsResource(filename);
+		Resource resource = storageService.loadAsResource(filename);
 		
-		return ResponseEntity.ok().body(uri);
+		return ResponseEntity.ok().body(resource);
 	}
 	
 	

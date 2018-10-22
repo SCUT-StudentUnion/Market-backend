@@ -17,5 +17,5 @@ public class Photo {
 	private Long id;
 
 	@NotNull
-	private String FileName;
+	private String fileName;
 }

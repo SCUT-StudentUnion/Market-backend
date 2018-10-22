@@ -17,6 +17,7 @@ jwt:
 
 upload:
     uri:
+    dir:
 
 # uncomment the following lines to let hibernate generate database tables
 #spring.jpa.hibernate.ddl-auto: create
