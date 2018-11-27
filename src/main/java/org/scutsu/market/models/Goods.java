@@ -5,7 +5,9 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -30,11 +32,22 @@ public class Goods {
 	private Category category;
 
 	@Column(precision = 12, scale = 2)
-	private BigDecimal buyingPrice;
-
-	@Column(precision = 12, scale = 2)
 	private BigDecimal sellingPrice;
 
 	@ManyToOne
 	private User releasedBy;
+	
+	@NotNull
+	private boolean sellOrBuy;
+	
+	@NotNull
+	private boolean southOrNorth;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
+	private Date beginTime;
+	
+	@NotNull
+	@Column(length = 60)
+	private String contactInfo;
 }
