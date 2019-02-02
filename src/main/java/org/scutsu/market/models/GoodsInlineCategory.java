@@ -26,4 +26,8 @@ public interface GoodsInlineCategory {
 	OffsetDateTime getCreatedTime();
 
 	OffsetDateTime getOnShelfTime();
+
+	GoodsAreaStatus getArea();
+
+	GoodsActiveStatus getActive();
 }

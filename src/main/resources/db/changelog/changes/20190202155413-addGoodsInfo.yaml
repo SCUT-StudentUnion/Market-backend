@@ -21,3 +21,16 @@ databaseChangeLog:
                               type: varchar(60)
                               constraints:
                                   nullable: false
+    - changeSet:
+          id: 2
+          author: huww98
+          changes:
+              - update:
+                    tableName: goods
+                    columns:
+                        - column:
+                              name: area
+                              value: NORTH
+                        - column:
+                              name: active
+                              value: SELL
