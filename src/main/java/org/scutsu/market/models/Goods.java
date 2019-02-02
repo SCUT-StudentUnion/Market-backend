@@ -30,7 +30,7 @@ public class Goods {
 	@ManyToOne
 	private Category category;
 
-	@Column(precision = 12, scale = 2)
+	@Column(precision = 12, scale = 2, nullable = true)
 	private BigDecimal buyingPrice;
 
 	@Column(precision = 12, scale = 2)
@@ -47,4 +47,17 @@ public class Goods {
 	private OffsetDateTime createdTime;
 
 	private OffsetDateTime onShelfTime;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private GoodsAreaStatus area;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private GoodsActiveStatus active;
+
+	@NotNull
+	@Column(length = 60)
+	private String contactInfo;
+
 }

@@ -9,6 +9,6 @@ public interface StorageService {
 
 	StoreResult store(MultipartFile file) throws IOException, InvalidFileNameException;
 
-	Resource loadAsResource(String filename) throws IOException;
+	Resource loadAsResource(String filename);
 
 }

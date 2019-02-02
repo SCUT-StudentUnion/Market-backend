@@ -1,0 +1,23 @@
+databaseChangeLog:
+    - changeSet:
+          id: 1
+          author: huww98
+          changes:
+              - addColumn:
+                    tableName: goods
+                    columns:
+                        - column:
+                              name: area
+                              type: varchar(20)
+                              constraints:
+                                  nullable: false
+                        - column:
+                              name: active
+                              type: varchar(20)
+                              constraints:
+                                  nullable: false
+                        - column:
+                              name: contact_info
+                              type: varchar(60)
+                              constraints:
+                                  nullable: false
