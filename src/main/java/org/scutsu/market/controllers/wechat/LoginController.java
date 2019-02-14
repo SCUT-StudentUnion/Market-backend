@@ -11,11 +11,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.scutsu.market.models.DTOs.LoginResult;
 import org.scutsu.market.models.User;
 import org.scutsu.market.repositories.UserRepository;
 import org.scutsu.market.security.JwtTokenProvider;
+import org.scutsu.market.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.Map;
 
 @ConfigurationProperties(prefix = "we-chat")
@@ -42,12 +46,6 @@ class WeChatProperties {
 
 	@NotNull
 	private String grantType = "authorization_code";
-}
-
-@Data
-class LoginResult {
-
-	private final String jwt;
 }
 
 @Data
@@ -86,9 +84,12 @@ public class LoginController {
 	}
 
 	@PostMapping("/login")
-	public LoginResult OnLogin(@RequestBody Map<String, String> reqMsg) throws IOException {
+	public ResponseEntity OnLogin(@RequestBody Map<String, String> reqMsg) throws IOException {
 
 		String code = reqMsg.get("code");
+		if (code == null) {
+			return ResponseEntity.badRequest().body("code is required");
+		}
 
 		try {
 			URIBuilder builder = new URIBuilder("https://api.weixin.qq.com/sns/jscode2session");
@@ -119,8 +120,9 @@ public class LoginController {
 				user.setWeChatOpenId(result.getOpenId());
 				userRepository.save(user);
 			}
-			String jwt = jwtTokenProvider.generateToken(user.getId());
-			return new LoginResult(jwt);
+			Principal p = new Principal(user.getId(), Collections.singleton("user"));
+			String jwt = jwtTokenProvider.generateToken(p);
+			return ResponseEntity.ok(new LoginResult(jwt));
 
 		} catch (URISyntaxException e) {
 			throw new RuntimeException("Unexpected error", e); // should never happen

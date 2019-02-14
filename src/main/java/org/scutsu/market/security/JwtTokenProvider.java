@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Date;
 
 @Data
@@ -36,26 +37,30 @@ public class JwtTokenProvider {
 		this.config = config;
 	}
 
-	public String generateToken(Long userId) {
+	public String generateToken(Principal principal) {
 
 		Date now = new Date();
 		Date expiryDate = new Date(now.getTime() + config.getExpiration().toMillis());
-
-		return Jwts.builder()
-			.setSubject(Long.toString(userId))
+		Claims claims = Jwts.claims()
+			.setSubject(Long.toString(principal.getUserId()))
 			.setIssuedAt(new Date())
-			.setExpiration(expiryDate)
+			.setExpiration(expiryDate);
+		claims.put("roles", String.join(" ", principal.getRoles()));
+		return Jwts.builder()
+			.setClaims(claims)
 			.signWith(SignatureAlgorithm.HS512, config.getSecret())
 			.compact();
 	}
 
-	Long getUserIdFromJWT(String token) {
+	Principal getPrincipalFromJWT(String token) {
 		Claims claims = Jwts.parser()
 			.setSigningKey(config.getSecret())
 			.parseClaimsJws(token)
 			.getBody();
-
-		return Long.parseLong(claims.getSubject());
+		String roles = (String) claims.getOrDefault("roles", "user");
+		return new Principal(
+			Long.parseLong(claims.getSubject()),
+			Arrays.asList(roles.split(" ")));
 	}
 
 	boolean validateToken(String authToken) {

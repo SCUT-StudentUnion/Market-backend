@@ -8,16 +8,16 @@ spring:
         password: 123456
     jpa:
         show-sql: true
-    security:
-        user:
-            name: user
-            password: 123456
 jwt:
     secret: scutsu-market-develop-jwt-secret
 
 upload:
     local:
         directory: ./upload/
+admin:
+    login:
+        username: admin
+        password: 123456
 
 # uncomment the following lines to let hibernate generate database tables
 #spring.jpa.hibernate.ddl-auto: create
