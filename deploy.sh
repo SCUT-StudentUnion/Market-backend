@@ -33,7 +33,7 @@ echo Stopping service
 ssh $server "systemctl --user stop $serviceName" || { echo Cannot stop. Abort.; exit 1; }
 
 echo Transferring files
-rsync -zv --checksum "$jarFile" "$server:$remoteTarget" || exit 1;
+rsync -zv --checksum --progress "$jarFile" "$server:$remoteTarget" || exit 1;
 
 echo restarting service
 jarFileName="$(basename "$jarFile")"
