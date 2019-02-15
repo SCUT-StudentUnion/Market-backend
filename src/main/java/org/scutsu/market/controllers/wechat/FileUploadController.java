@@ -11,7 +11,6 @@ import org.scutsu.market.storage.StoreResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
-import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -19,13 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Data
 @Component
@@ -52,12 +47,7 @@ class PhotoUriGenerator {
 
 		URI baseUri = uploadProperties.getUri();
 		if (baseUri == null) {
-			try {
-				Method method = FileUploadController.class.getMethod("serveFile", String.class);
-				return linkTo(method, photo.getFileName()).toUri();
-			} catch (NoSuchMethodException e) {
-				throw new RuntimeException("should never happen", e);
-			}
+			return URI.create("/files/" + photo.getFileName());
 		} else {
 			return baseUri.resolve(photo.getFileName());
 		}
@@ -71,14 +61,12 @@ public class FileUploadController {
 
 	private final StorageService storageService;
 	private final PhotoRepository photoRepository;
-	private final RepositoryEntityLinks entityLinks;
 	private final PhotoUriGenerator photoUriGenerator;
 
 	@Autowired
-	public FileUploadController(StorageService storageService, PhotoRepository photoRepository, RepositoryEntityLinks entityLinks, PhotoUriGenerator photoUriGenerator) {
+	public FileUploadController(StorageService storageService, PhotoRepository photoRepository, PhotoUriGenerator photoUriGenerator) {
 		this.storageService = storageService;
 		this.photoRepository = photoRepository;
-		this.entityLinks = entityLinks;
 		this.photoUriGenerator = photoUriGenerator;
 	}
 
@@ -91,7 +79,7 @@ public class FileUploadController {
 	}
 
 	@PostMapping("/uploadfile")
-	public ResponseEntity handleUploadFile(@RequestParam("file") MultipartFile file) throws IOException, URISyntaxException {
+	public ResponseEntity handleUploadFile(@RequestParam("file") MultipartFile file) throws IOException {
 		if (file.isEmpty()) {
 			log.error("上传的图片不存在");
 			return ResponseEntity.badRequest().body("未找到上传的文件");
@@ -102,9 +90,8 @@ public class FileUploadController {
 			Photo newPhoto = new Photo();
 			newPhoto.setFileName(result.getFileName());
 			newPhoto = photoRepository.save(newPhoto);
-			URI entityUri = new URI(entityLinks.linkToSingleResource(Photo.class, newPhoto.getId()).getHref());
 
-			return ResponseEntity.created(entityUri).body(new UploadResult(entityUri, photoUriGenerator.generateUri(newPhoto)));
+			return ResponseEntity.ok(new UploadResult(newPhoto.getId(), photoUriGenerator.generateUri(newPhoto)));
 		} catch (InvalidFileNameException e) {
 			return ResponseEntity.badRequest().body("无效的文件名");
 		}
@@ -112,7 +99,7 @@ public class FileUploadController {
 
 	@Value
 	private class UploadResult {
-		URI entityUri;
+		Long photoId;
 		URI photoUri;
 	}
 }
