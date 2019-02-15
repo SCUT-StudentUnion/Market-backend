@@ -12,10 +12,10 @@ import java.util.List;
 public class User {
 
 	@OneToMany(mappedBy = "releasedBy")
-	List<Goods> releasedGoods = new ArrayList<>();
+	private List<Goods> releasedGoods = new ArrayList<>();
 
 	@ManyToMany
-	List<Goods> collectedGoods = new ArrayList<>();
+	private List<Goods> collectedGoods = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

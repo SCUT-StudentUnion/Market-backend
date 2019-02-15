@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@Projection(name = "inlineCategoryPhoto", types = {Goods.class})
-public interface GoodsInlineCategory {
+@Projection(name = "defaultList", types = {Goods.class})
+public interface GoodsList {
 
 	String getTitle();
 

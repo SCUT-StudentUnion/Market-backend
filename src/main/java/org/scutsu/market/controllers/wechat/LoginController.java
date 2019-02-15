@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.Map;
 
 @ConfigurationProperties(prefix = "we-chat")
@@ -120,7 +119,7 @@ public class LoginController {
 				user.setWeChatOpenId(result.getOpenId());
 				userRepository.save(user);
 			}
-			Principal p = new Principal(user.getId(), Collections.singleton("user"));
+			Principal p = new Principal(user.getId(), "user");
 			String jwt = jwtTokenProvider.generateToken(p);
 			return ResponseEntity.ok(new LoginResult(jwt));
 

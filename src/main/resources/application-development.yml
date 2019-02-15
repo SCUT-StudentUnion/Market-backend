@@ -10,6 +10,8 @@ spring:
         show-sql: true
 jwt:
     secret: scutsu-market-develop-jwt-secret
+    test-user:
+        enabled: true
 
 upload:
     local:

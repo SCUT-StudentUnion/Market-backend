@@ -6,13 +6,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Optional;
 
-@PreAuthorize("hasAuthority('admin')")
+@PreAuthorize("hasRole('ADMIN')")
 public interface CategoryRepository extends CrudRepository<Category, Long> {
 	@Override
-	@PreAuthorize("true")
+	@PreAuthorize("permitAll")
 	Iterable<Category> findAll();
 
 	@Override
-	@PreAuthorize("true")
+	@PreAuthorize("permitAll")
 	Optional<Category> findById(Long aLong);
 }

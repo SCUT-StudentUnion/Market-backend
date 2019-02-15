@@ -3,7 +3,6 @@ package org.scutsu.market.security;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Component;
@@ -32,7 +31,7 @@ public class AdminUserDetailsService extends InMemoryUserDetailsManager {
 	public AdminUserDetailsService(AdminLoginProperties adminLoginProperties) {
 		this.createUser(User.withUsername(adminLoginProperties.getUsername())
 			.password("{noop}" + adminLoginProperties.getPassword())
-			.authorities(new SimpleGrantedAuthority("admin"))
+			.roles("ADMIN")
 			.build());
 	}
 }

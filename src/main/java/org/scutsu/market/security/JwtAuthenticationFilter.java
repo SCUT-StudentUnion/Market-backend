@@ -41,6 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			log.debug("jwt authenticate successful. userId: " + principal.getUserId());
 
 			Collection<SimpleGrantedAuthority> authorities = principal.getRoles().stream()
+				.map(r -> "ROLE_" + r.toUpperCase())
 				.map(SimpleGrantedAuthority::new)
 				.collect(Collectors.toList());
 			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
