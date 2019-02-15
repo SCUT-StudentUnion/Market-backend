@@ -1,5 +1,7 @@
 package org.scutsu.market.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,9 +21,11 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonView(Views.Minimum.class)
 	private Long id;
 
 	@NotNull
 	@Column(nullable = false)
+	@JsonIgnore
 	private String weChatOpenId;
 }

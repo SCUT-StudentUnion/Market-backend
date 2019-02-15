@@ -1,5 +1,6 @@
 package org.scutsu.market.models;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -14,8 +15,10 @@ public class Photo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonView(Views.Minimum.class)
 	private Long id;
 
 	@NotNull
+	@JsonView(Views.Goods.List.class)
 	private String fileName;
 }
