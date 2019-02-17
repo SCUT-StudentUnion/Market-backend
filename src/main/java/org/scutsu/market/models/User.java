@@ -25,7 +25,9 @@ public class User {
 	private Long id;
 
 	@NotNull
-	@Column(nullable = false)
 	@JsonIgnore
 	private String weChatOpenId;
+
+	@Column(length = 40)
+	private String name;
 }

@@ -8,6 +8,9 @@ public class Views {
 		interface List extends Minimum {
 		}
 
+		interface Admin extends List {
+		}
+
 		interface UserAccessible {
 		}
 	}

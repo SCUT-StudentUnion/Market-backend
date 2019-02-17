@@ -1,0 +1,16 @@
+jwt:
+    secret: scutsu-market-test-jwt-secret
+upload:
+    local:
+        directory: ./upload/
+admin:
+    login:
+        username: admin
+        password: 123456
+we-chat:
+    app-id: fake-app-id
+    secret: fake-secret
+spring:
+    jpa:
+        properties:
+            hibernate.dialect: org.hibernate.dialect.H2Dialect

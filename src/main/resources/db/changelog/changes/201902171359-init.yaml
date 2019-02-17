@@ -31,11 +31,37 @@ databaseChangeLog:
             - column:
                   name: we_chat_open_id
                   type: varchar(255)
+                  constraints:
+                      nullable: false
             - column:
-                  name: telephone_number
-                  type: varchar(20)
+                  name: name
+                  type: varchar(40)
       - createTable:
             tableName: goods
+            columns:
+            - column:
+                  name: id
+                  type: bigint(20)
+                  autoIncrement: true
+                  constraints:
+                      primaryKey: true
+                      nullable: false
+            - column:
+                  name: current_description_id
+                  type: bigint(20)
+            - column:
+                  name: released_by_id
+                  type: bigint(20)
+                  constraints:
+                      nullable: false
+                      foreignKeyName: fk_goods_released_by
+                      references: user(id)
+            - column:
+                  name: on_shelf_time
+                  type: datetime(3)
+
+      - createTable:
+            tableName: goods_description
             columns:
             - column:
                   name: id
@@ -59,17 +85,50 @@ databaseChangeLog:
                   name: selling_price
                   type: decimal(12,2)
             - column:
+                  name: area
+                  type: int(11)
+                  constraints:
+                      nullable: false
+            - column:
+                  name: active
+                  type: int(11)
+                  constraints:
+                      nullable: false
+            - column:
+                  name: contact_info
+                  type: varchar(60)
+                  constraints:
+                      nullable: false
+            - column:
                   name: category_id
                   type: bigint(20)
                   constraints:
                       foreignKeyName: fk_goods_category
                       references: category(id)
             - column:
-                  name: released_by_id
+                  name: goods_id
                   type: bigint(20)
                   constraints:
-                      foreignKeyName: fk_goods_released_by
-                      references: user(id)
+                      foreignKeyName: fk_goods_description_goods
+                      references: goods(id)
+            - column:
+                  name: created_time
+                  type: datetime(3)
+            - column:
+                  name: reviewed_time
+                  type: datetime(3)
+            - column:
+                  name: review_status
+                  type: int(11)
+            - column:
+                  name: review_comments
+                  type: text
+      - addForeignKeyConstraint:
+            baseTableName: goods
+            baseColumnNames: current_description_id
+            referencedTableName: goods_description
+            referencedColumnNames: id
+            constraintName: fk_goods_current_description
       - createTable:
             tableName: photo
             columns:
@@ -81,12 +140,12 @@ databaseChangeLog:
                       primaryKey: true
                       nullable: false
             - column:
-                  name: uri
+                  name: file_name
                   type: varchar(255)
                   constraints:
                       nullable: false
       - createTable:
-            tableName: goods-photos
+            tableName: goods_description_photos
             columns:
             - column:
                   name: photos_id
@@ -97,12 +156,12 @@ databaseChangeLog:
                       foreignKeyName: fk_goods_photos_photo
                       references: photo(id)
             - column:
-                  name: goods_id
+                  name: goods_description_id
                   type: bigint(20)
                   constraints:
                       nullable: false
                       foreignKeyName: fk_goods_photos_goods
-                      references: goods(id)
+                      references: goods_description(id)
       - createTable:
             tableName: user_comment
             columns:
@@ -115,12 +174,12 @@ databaseChangeLog:
                       nullable: false
             - column:
                   name: comment
-                  type: varchar(210)
+                  type: longtext
                   constraints:
                       nullable: false
             - column:
-                  name: date
-                  type: datetime(6)
+                  name: time
+                  type: datetime(3)
                   constraints:
                       nullable: false
             - column:

@@ -11,7 +11,7 @@ cache:
 
 install:
 script:
-- ./mvnw package -B -DskipTests=true
+- ./mvnw package -B
 
 deploy:
 - provider: script
