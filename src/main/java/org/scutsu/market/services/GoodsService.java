@@ -51,6 +51,7 @@ public class GoodsService {
 		return goods;
 	}
 
+	@Transactional
 	public Goods update(Goods goods, GoodsDescription newDesc) {
 		validate(newDesc);
 		GoodsDescription oldDesc = goods.getCurrentDescription();
@@ -66,11 +67,13 @@ public class GoodsService {
 			return goods;
 		} else {
 			newDesc.setReviewStatus(GoodsReviewStatus.APPROVED);
+			newDesc = goodsDescriptionRepository.save(newDesc);
 			goods.setCurrentDescription(newDesc);
 			return goodsRepository.save(goods);
 		}
 	}
 
+	@Transactional
 	public void reviewApprove(GoodsDescription desc) {
 		if (desc.getReviewStatus() == GoodsReviewStatus.APPROVED) {
 			return;
@@ -81,14 +84,23 @@ public class GoodsService {
 		desc.getGoods().setCurrentDescription(desc);
 		desc.getGoods().setOnShelfTime(OffsetDateTime.now());
 		goodsDescriptionRepository.save(desc);
-		goodsDescriptionRepository.delete(oldDesc);
+		goodsRepository.save(desc.getGoods());
+		if (oldDesc != null) {
+			goodsDescriptionRepository.delete(oldDesc);
+		}
 	}
 
+	@Transactional
 	public void reviewRequestChange(GoodsDescription desc, String comments) {
 		desc.setReviewStatus(GoodsReviewStatus.CHANGE_REQUESTED);
 		desc.setReviewComments(comments);
 		desc.setReviewedTime(OffsetDateTime.now());
-		goodsDescriptionRepository.save(desc);
+		desc = goodsDescriptionRepository.save(desc);
+		Goods goods = desc.getGoods();
+		if (goods.getCurrentDescription() != null) {
+			goods.setCurrentDescription(null);
+			goodsRepository.save(goods);
+		}
 	}
 
 	public Iterable<Goods> getAll() {

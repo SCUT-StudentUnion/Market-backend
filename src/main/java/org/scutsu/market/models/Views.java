@@ -5,10 +5,13 @@ public class Views {
 	}
 
 	public interface Goods {
-		interface List extends Minimum {
+		interface Public extends Minimum {
 		}
 
-		interface Admin extends List {
+		interface List extends Public {
+		}
+
+		interface Admin extends Public {
 		}
 
 		interface UserAccessible {

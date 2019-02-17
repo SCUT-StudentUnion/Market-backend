@@ -19,7 +19,7 @@ public class Goods {
 	@JsonView(Views.Goods.List.class)
 	private User releasedBy;
 
-	@JsonView(Views.Goods.List.class)
+	@JsonView(Views.Goods.Public.class)
 	private OffsetDateTime onShelfTime;
 
 	@ManyToOne

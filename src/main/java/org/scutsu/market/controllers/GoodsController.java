@@ -1,6 +1,7 @@
 package org.scutsu.market.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Data;
 import org.scutsu.market.models.Goods;
 import org.scutsu.market.models.GoodsDescription;
 import org.scutsu.market.models.Views;
@@ -55,7 +56,13 @@ public class GoodsController {
 
 	@PostMapping("/{id}/review/requestChange")
 	@PreAuthorize("hasRole('ADMIN')")
-	public void reviewRequestChange(@PathVariable("id") GoodsDescription desc, String comments) {
-		goodsService.reviewRequestChange(desc, comments);
+	public void reviewRequestChange(@PathVariable("id") GoodsDescription desc,
+									@RequestBody RequestChangeForm comments) {
+		goodsService.reviewRequestChange(desc, comments.getComments());
+	}
+
+	@Data
+	private static class RequestChangeForm {
+		private String comments;
 	}
 }

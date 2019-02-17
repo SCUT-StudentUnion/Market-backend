@@ -17,6 +17,6 @@ public class Category {
 
 	@NotNull
 	@Column(length = 45)
-	@JsonView(Views.Goods.List.class)
+	@JsonView(Views.Goods.Public.class)
 	private String name;
 }
