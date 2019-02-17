@@ -210,3 +210,31 @@ databaseChangeLog:
                   constraints:
                       foreignKeyName: fk_user_collected_goods_goods
                       references: goods(id)
+- changeSet:
+      id: 2
+      author: huww98
+      changes:
+      - insert:
+            tableName: category
+            columns:
+            - column:
+                  name: name
+                  value: 电子产品
+      - insert:
+            tableName: category
+            columns:
+            - column:
+                  name: name
+                  value: 文具
+      - insert:
+            tableName: category
+            columns:
+            - column:
+                  name: name
+                  value: 工具
+      - insert:
+            tableName: category
+            columns:
+            - column:
+                  name: name
+                  value: 其他
