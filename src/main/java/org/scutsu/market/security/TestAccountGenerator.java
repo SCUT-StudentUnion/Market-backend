@@ -2,8 +2,7 @@ package org.scutsu.market.security;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.scutsu.market.models.User;
-import org.scutsu.market.repositories.UserRepository;
+import org.scutsu.market.services.WeChatLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -27,30 +26,21 @@ class JwtTestUserProperties {
 public class TestAccountGenerator implements ApplicationRunner {
 
 	private final JwtTestUserProperties config;
-	private final UserRepository userRepository;
-	private final JwtTokenProvider jwtTokenProvider;
+	private final WeChatLoginService weChatLoginService;
 
 	@Autowired
-	public TestAccountGenerator(JwtTestUserProperties config, UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
+	public TestAccountGenerator(JwtTestUserProperties config, WeChatLoginService weChatLoginService) {
 		this.config = config;
-		this.userRepository = userRepository;
-		this.jwtTokenProvider = jwtTokenProvider;
+		this.weChatLoginService = weChatLoginService;
 	}
 
 	@Override
-	public void run(ApplicationArguments args) throws Exception {
+	public void run(ApplicationArguments args) {
 		if (!config.isEnabled()) {
 			return;
 		}
 
-		User user = userRepository.findByWeChatOpenId(config.getWeChatOpenId());
-		if (user == null) {
-			User newUser = new User();
-			newUser.setWeChatOpenId(config.getWeChatOpenId());
-			user = userRepository.save(newUser);
-		}
-		Principal p = new Principal(user.getId(), "user");
-		String jwt = jwtTokenProvider.generateToken(p);
-		log.info("Test user ID: {} JWT: {}", user.getId(), jwt);
+		var jwt = weChatLoginService.loginOpenId(config.getWeChatOpenId());
+		log.info("Test user JWT: {}", jwt);
 	}
 }
