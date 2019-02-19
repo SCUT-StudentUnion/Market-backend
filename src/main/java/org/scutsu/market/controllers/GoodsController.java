@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 @RestController
 @RequestMapping("/goods")
 public class GoodsController {
@@ -31,7 +34,8 @@ public class GoodsController {
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('USER') && #goods.releasedBy.id == principal.userId || hasRole('ADMIN')")
 	@JsonView(Views.Minimum.class)
-	public Goods update(@PathVariable("id") Goods goods, @RequestBody @JsonView(Views.Goods.UserAccessible.class) GoodsDescription desc) {
+	public Goods update(@PathVariable("id") Goods goods,
+						@RequestBody @JsonView(Views.Goods.UserAccessible.class) GoodsDescription desc) {
 		return goodsService.update(goods, desc);
 	}
 
@@ -57,12 +61,13 @@ public class GoodsController {
 	@PostMapping("/{id}/review/requestChange")
 	@PreAuthorize("hasRole('ADMIN')")
 	public void reviewRequestChange(@PathVariable("id") GoodsDescription desc,
-									@RequestBody RequestChangeForm comments) {
+									@RequestBody @Valid RequestChangeForm comments) {
 		goodsService.reviewRequestChange(desc, comments.getComments());
 	}
 
 	@Data
 	private static class RequestChangeForm {
+		@NotNull
 		private String comments;
 	}
 }

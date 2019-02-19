@@ -1,6 +1,5 @@
 package org.scutsu.market.configuration;
 
-import org.scutsu.market.security.JwtAuthenticationEntryPoint;
 import org.scutsu.market.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,23 +18,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
-	private final JwtAuthenticationEntryPoint unauthorizedHandler;
 
 	@Autowired
-	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, JwtAuthenticationEntryPoint unauthorizedHandler) {
+	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
 		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-		this.unauthorizedHandler = unauthorizedHandler;
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
-			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-			.authorizeRequests()
-			.anyRequest().permitAll().and()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-			.csrf().disable();
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+		http
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+			.csrf().disable()
+			.authorizeRequests().anyRequest().permitAll();
 	}
 
 	@Bean

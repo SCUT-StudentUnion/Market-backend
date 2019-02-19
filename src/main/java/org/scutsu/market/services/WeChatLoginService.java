@@ -37,6 +37,13 @@ class WeChatProperties {
 	private String grantType = "authorization_code";
 }
 
+class CodeToSessionErrorCode {
+	static final int SUCCESS = 0,
+		BUSY = -1,
+		INVALID_CODE = 40029,
+		FREQUENCY_LIMITED = 45011;
+}
+
 @Data
 class CodeToSessionResult {
 
@@ -52,7 +59,7 @@ class CodeToSessionResult {
 	private final String errorMessage;
 
 	boolean isSuccess() {
-		return errorCode == 0;
+		return errorCode == CodeToSessionErrorCode.SUCCESS;
 	}
 }
 
@@ -83,7 +90,12 @@ public class WeChatLoginService {
 		return jwtTokenProvider.generateToken(p);
 	}
 
-	public String loginCode(String code) throws IOException, InterruptedException {
+	/**
+	 * @param code code from WeChat client
+	 * @return jwt
+	 * @throws WeChatLoginFailedException Cannot login with WeChat API
+	 */
+	public String loginCode(String code) {
 		if (code == null || code.isEmpty()) {
 			throw new IllegalArgumentException("code must not be empty");
 		}
@@ -99,17 +111,27 @@ public class WeChatLoginService {
 			.build();
 		HttpClient client = HttpClient.newHttpClient();
 
-		var response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+		try {
+			var response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
-		if (response.statusCode() != HttpStatus.OK.value()) {
-			throw new WeChatLoginFailedException("jscode2session returned unexpected code " + response.statusCode());
+			if (response.statusCode() != HttpStatus.OK.value()) {
+				throw new WeChatLoginFailedException("jscode2session returned unexpected http status code " + response.statusCode());
+			}
+
+			CodeToSessionResult result = objectMapper.readValue(response.body(), CodeToSessionResult.class);
+			if (!result.isSuccess()) {
+				switch (result.getErrorCode()) {
+					case CodeToSessionErrorCode.INVALID_CODE:
+						throw new WeChatLoginInvalidCodeException(result.getErrorMessage());
+					case CodeToSessionErrorCode.FREQUENCY_LIMITED:
+						throw new WeChatLoginFrequencyLimitedException(result.getErrorMessage());
+				}
+				throw new WeChatLoginFailedException("jscode2session failed. code: " + result.getErrorCode() + " message: " + result.getErrorMessage());
+			}
+
+			return loginOpenId(result.getOpenId());
+		} catch (IOException | InterruptedException e) {
+			throw new WeChatLoginFailedException(e);
 		}
-
-		CodeToSessionResult result = objectMapper.readValue(response.body(), CodeToSessionResult.class);
-		if (!result.isSuccess()) {
-			throw new WeChatLoginFailedException("jscode2session failed. code: " + result.getErrorCode() + " message: " + result.getErrorMessage());
-		}
-
-		return loginOpenId(result.getOpenId());
 	}
 }

@@ -1,12 +1,18 @@
 package org.scutsu.market.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.scutsu.market.ApiErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.constraints.NotNull;
 import java.time.Duration;
@@ -24,6 +30,14 @@ class JwtProperties {
 
 	@NotNull
 	private Duration expiration = Duration.ofDays(2);
+}
+
+@ApiErrorCode("invalid-jwt")
+@ResponseStatus(HttpStatus.UNAUTHORIZED)
+class InvalidJwtException extends RuntimeException {
+	InvalidJwtException(Throwable e) {
+		super(e);
+	}
 }
 
 @Component
@@ -53,31 +67,17 @@ public class JwtTokenProvider {
 	}
 
 	Principal getPrincipalFromJWT(String token) {
-		Claims claims = Jwts.parser()
-			.setSigningKey(config.getSecret())
-			.parseClaimsJws(token)
-			.getBody();
-		String roles = (String) claims.getOrDefault("roles", "user");
-		return new Principal(
-			Long.parseLong(claims.getSubject()),
-			Arrays.asList(roles.split(" ")));
-	}
-
-	boolean validateToken(String authToken) {
 		try {
-			Jwts.parser().setSigningKey(config.getSecret()).parseClaimsJws(authToken);
-			return true;
-		} catch (SignatureException ex) {
-			log.error("Invalid JWT signature");
-		} catch (MalformedJwtException ex) {
-			log.error("Invalid JWT token");
-		} catch (ExpiredJwtException ex) {
-			log.error("Expired JWT token");
-		} catch (UnsupportedJwtException ex) {
-			log.error("Unsupported JWT token");
-		} catch (IllegalArgumentException ex) {
-			log.error("JWT claims string is empty.");
+			Claims claims = Jwts.parser()
+				.setSigningKey(config.getSecret())
+				.parseClaimsJws(token)
+				.getBody();
+			String roles = (String) claims.getOrDefault("roles", "user");
+			return new Principal(
+				Long.parseLong(claims.getSubject()),
+				Arrays.asList(roles.split(" ")));
+		} catch (JwtException e) {
+			throw new InvalidJwtException(e);
 		}
-		return false;
 	}
 }

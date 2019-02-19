@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -34,18 +35,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		if (!StringUtils.hasText(jwt)) {
 			log.debug("jwt not found");
-		} else if (!tokenProvider.validateToken(jwt)) {
-			log.debug("jwt not valid");
 		} else {
-			Principal principal = tokenProvider.getPrincipalFromJWT(jwt);
-			log.debug("jwt authenticate successful. userId: " + principal.getUserId());
+			try {
+				Principal principal = tokenProvider.getPrincipalFromJWT(jwt);
+				log.debug("jwt authenticate successful. userId: {}", principal.getUserId());
 
-			Collection<SimpleGrantedAuthority> authorities = principal.getRoles().stream()
-				.map(r -> "ROLE_" + r.toUpperCase())
-				.map(SimpleGrantedAuthority::new)
-				.collect(Collectors.toList());
-			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
-			SecurityContextHolder.getContext().setAuthentication(auth);
+				Collection<SimpleGrantedAuthority> authorities = principal.getRoles().stream()
+					.map(r -> "ROLE_" + r.toUpperCase())
+					.map(SimpleGrantedAuthority::new)
+					.collect(Collectors.toList());
+				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
+				SecurityContextHolder.getContext().setAuthentication(auth);
+			} catch (InvalidJwtException e) {
+				request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, e);
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+				return;
+			}
 		}
 
 		filterChain.doFilter(request, response);

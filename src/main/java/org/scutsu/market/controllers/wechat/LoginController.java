@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.scutsu.market.models.DTOs.LoginResult;
 import org.scutsu.market.services.WeChatLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @RestController
 @RequestMapping("/wechat")
@@ -24,14 +26,15 @@ public class LoginController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity OnLogin(@RequestBody LoginForm form) throws Exception {
+	public LoginResult OnLogin(@RequestBody @Valid LoginForm form) {
 
 		var jwt = weChatLoginService.loginCode(form.getCode());
-		return ResponseEntity.ok(new LoginResult(jwt));
+		return new LoginResult(jwt);
 	}
 
 	@Data
 	private static class LoginForm {
+		@NotBlank
 		private String code;
 	}
 }
