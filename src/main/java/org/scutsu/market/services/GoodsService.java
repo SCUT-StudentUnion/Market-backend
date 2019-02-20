@@ -8,6 +8,8 @@ import org.scutsu.market.repositories.GoodsDescriptionRepository;
 import org.scutsu.market.repositories.GoodsRepository;
 import org.scutsu.market.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -103,12 +105,16 @@ public class GoodsService {
 		}
 	}
 
-	public Iterable<Goods> getAll() {
-		return goodsRepository.findAllByCurrentDescriptionNotNull();
+	public Page<Goods> getAll(Pageable pageable) {
+		return goodsRepository.findAllByCurrentDescriptionNotNull(pageable);
 	}
 
-	public Iterable<GoodsDescription> getAllNeedReview() {
-		return goodsDescriptionRepository.findAllByReviewStatusNot(GoodsReviewStatus.APPROVED);
+	public Page<GoodsDescription> getAllNeedReview(Pageable pageable) {
+		return goodsDescriptionRepository.findAllByReviewStatus(GoodsReviewStatus.PENDING, pageable);
+	}
+
+	public Page<GoodsDescription> getAllChangeRequested(Pageable pageable) {
+		return goodsDescriptionRepository.findAllByReviewStatus(GoodsReviewStatus.CHANGE_REQUESTED, pageable);
 	}
 
 	private Long getCurrentUserId() {
