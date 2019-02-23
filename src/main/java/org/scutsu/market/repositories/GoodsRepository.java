@@ -7,4 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface GoodsRepository extends CrudRepository<Goods, Long> {
 	Page<Goods> findAllByCurrentDescriptionNotNull(Pageable pageable);
+
+	Page<Goods> findAllByCurrentDescriptionCategoryId(long id, Pageable pageable);
 }
