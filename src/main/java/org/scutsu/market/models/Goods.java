@@ -3,7 +3,9 @@ package org.scutsu.market.models;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -15,8 +17,9 @@ public class Goods {
 	@JsonView(Views.Minimum.class)
 	private Long id;
 
-	@ManyToOne(optional = false)
+	@ManyToOne
 	@JsonView(Views.Goods.List.class)
+	@NotNull
 	private User releasedBy;
 
 	@JsonView(Views.Goods.Public.class)
@@ -24,6 +27,7 @@ public class Goods {
 
 	@ManyToOne
 	@JsonView(Views.Goods.List.class)
+	@Nullable
 	private GoodsDescription currentDescription;
 
 }

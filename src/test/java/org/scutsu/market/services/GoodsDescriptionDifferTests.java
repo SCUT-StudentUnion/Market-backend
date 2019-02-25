@@ -1,16 +1,14 @@
-package org.scutsu.market;
+package org.scutsu.market.services;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.scutsu.market.models.Category;
 import org.scutsu.market.models.GoodsDescription;
 import org.scutsu.market.models.Photo;
-import org.scutsu.market.services.GoodsDescriptionDiffer;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 
-@SpringBootTest
+import static org.junit.Assert.*;
+
 public class GoodsDescriptionDifferTests {
 
 	private final GoodsDescriptionDiffer goodsDescriptionDiffer;
@@ -27,7 +25,7 @@ public class GoodsDescriptionDifferTests {
 		working.setTitle("test goods modified");
 		GoodsDescriptionDiffer.Diff diff = goodsDescriptionDiffer.checkDiff(base, working);
 
-		Assert.assertEquals(GoodsDescriptionDiffer.Diff.NEED_REVIEW, diff);
+		assertEquals(GoodsDescriptionDiffer.Diff.NEED_REVIEW, diff);
 	}
 
 	@Test
@@ -41,7 +39,7 @@ public class GoodsDescriptionDifferTests {
 
 		GoodsDescriptionDiffer.Diff diff = goodsDescriptionDiffer.checkDiff(base, working);
 
-		Assert.assertEquals(GoodsDescriptionDiffer.Diff.UPDATED, diff);
+		assertEquals(GoodsDescriptionDiffer.Diff.UPDATED, diff);
 	}
 
 	@Test
@@ -57,7 +55,7 @@ public class GoodsDescriptionDifferTests {
 
 		GoodsDescriptionDiffer.Diff diff = goodsDescriptionDiffer.checkDiff(base, working);
 
-		Assert.assertEquals(GoodsDescriptionDiffer.Diff.NO_CHANGE, diff);
+		assertEquals(GoodsDescriptionDiffer.Diff.NO_CHANGE, diff);
 	}
 
 	@Test
@@ -73,7 +71,7 @@ public class GoodsDescriptionDifferTests {
 
 		GoodsDescriptionDiffer.Diff diff = goodsDescriptionDiffer.checkDiff(base, working);
 
-		Assert.assertEquals(GoodsDescriptionDiffer.Diff.NO_CHANGE, diff);
+		assertEquals(GoodsDescriptionDiffer.Diff.NO_CHANGE, diff);
 	}
 
 	@Test
@@ -88,11 +86,11 @@ public class GoodsDescriptionDifferTests {
 
 		GoodsDescriptionDiffer.Diff diff1 = goodsDescriptionDiffer.checkDiff(base, working);
 
-		Assert.assertFalse(diff1.isUpdated());
+		assertFalse(diff1.isUpdated());
 
 		working.getCategory().setId(11L);
 		GoodsDescriptionDiffer.Diff diff2 = goodsDescriptionDiffer.checkDiff(base, working);
-		Assert.assertTrue(diff2.isUpdated());
+		assertTrue(diff2.isUpdated());
 	}
 
 	@Test
@@ -113,14 +111,14 @@ public class GoodsDescriptionDifferTests {
 
 		GoodsDescriptionDiffer.Diff diff1 = goodsDescriptionDiffer.checkDiff(base, working);
 
-		Assert.assertFalse(diff1.isUpdated());
+		assertFalse(diff1.isUpdated());
 
 		working.getPhotos().get(1).setId(12L);
 		GoodsDescriptionDiffer.Diff diff2 = goodsDescriptionDiffer.checkDiff(base, working);
-		Assert.assertTrue(diff2.isUpdated());
+		assertTrue(diff2.isUpdated());
 
 		working.getPhotos().remove(1);
 		GoodsDescriptionDiffer.Diff diff3 = goodsDescriptionDiffer.checkDiff(base, working);
-		Assert.assertTrue(diff3.isUpdated());
+		assertTrue(diff3.isUpdated());
 	}
 }

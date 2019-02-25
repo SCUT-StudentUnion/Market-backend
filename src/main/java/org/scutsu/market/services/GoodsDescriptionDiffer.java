@@ -6,6 +6,8 @@ import org.scutsu.market.models.GoodsDescription;
 import org.scutsu.market.models.Photo;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -14,7 +16,10 @@ import java.util.stream.Collectors;
 @Service
 public class GoodsDescriptionDiffer {
 
-	public Diff checkDiff(GoodsDescription oldDesc, GoodsDescription newDesc) {
+	public Diff checkDiff(@Nullable GoodsDescription oldDesc, @Nonnull GoodsDescription newDesc) {
+		if (oldDesc == null) {
+			return Diff.NEED_REVIEW;
+		}
 		List<Function<GoodsDescription, Object>> needReview = List.of(
 			GoodsDescription::getTitle,
 			GoodsDescription::getDetail,

@@ -1,35 +1,29 @@
 package org.scutsu.market.services;
 
+import lombok.AllArgsConstructor;
 import org.scutsu.market.models.Goods;
 import org.scutsu.market.models.GoodsDescription;
 import org.scutsu.market.models.GoodsReviewStatus;
 import org.scutsu.market.models.User;
 import org.scutsu.market.repositories.GoodsDescriptionRepository;
 import org.scutsu.market.repositories.GoodsRepository;
-import org.scutsu.market.security.Principal;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Service
+@AllArgsConstructor
 public class GoodsService {
 	private final GoodsRepository goodsRepository;
 	private final GoodsDescriptionRepository goodsDescriptionRepository;
 	private final GoodsDescriptionDiffer goodsDescriptionDiffer;
-
-	@Autowired
-	public GoodsService(GoodsRepository goodsRepository, GoodsDescriptionRepository goodsDescriptionRepository, GoodsDescriptionDiffer goodsDescriptionDiffer) {
-		this.goodsRepository = goodsRepository;
-		this.goodsDescriptionRepository = goodsDescriptionRepository;
-		this.goodsDescriptionDiffer = goodsDescriptionDiffer;
-	}
+	private final UserIdProvider userIdProvider;
+	private final Clock clock;
 
 	private void validate(GoodsDescription desc) {
 		Objects.requireNonNull(desc.getCategory());
@@ -41,10 +35,10 @@ public class GoodsService {
 		validate(desc);
 
 		desc.setReviewStatus(GoodsReviewStatus.PENDING);
-		desc.setCreatedTime(OffsetDateTime.now());
+		desc.setCreatedTime(OffsetDateTime.now(clock));
 		Goods goods = new Goods();
 		User releasedBy = new User();
-		releasedBy.setId(getCurrentUserId());
+		releasedBy.setId(userIdProvider.getCurrentUserId());
 		goods.setReleasedBy(releasedBy);
 
 		goods = goodsRepository.save(goods);
@@ -58,21 +52,31 @@ public class GoodsService {
 		validate(newDesc);
 		GoodsDescription oldDesc = goods.getCurrentDescription();
 		GoodsDescriptionDiffer.Diff descDiff = goodsDescriptionDiffer.checkDiff(oldDesc, newDesc);
-		if (!descDiff.isUpdated()) {
+		if (!descDiff.isUpdated() && !goodsDescriptionRepository.existsByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED)) {
 			return goods;
 		}
 		newDesc.setGoods(goods);
-		newDesc.setCreatedTime(OffsetDateTime.now());
+		newDesc.setCreatedTime(OffsetDateTime.now(clock));
 		if (descDiff.isNeedReview()) {
+			var previousChangeRequestedDesc =
+				goodsDescriptionRepository.findByGoodsIdAndReviewStatus(goods.getId(), GoodsReviewStatus.CHANGE_REQUESTED);
+			previousChangeRequestedDesc.ifPresent(d -> {
+				newDesc.setReviewComments(d.getReviewComments());
+				newDesc.setReviewedTime(d.getReviewedTime());
+			});
+			goodsDescriptionRepository.deleteByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED);
 			newDesc.setReviewStatus(GoodsReviewStatus.PENDING);
 			goodsDescriptionRepository.save(newDesc);
-			return goods;
 		} else {
+			goodsDescriptionRepository.deleteByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED);
 			newDesc.setReviewStatus(GoodsReviewStatus.APPROVED);
-			newDesc = goodsDescriptionRepository.save(newDesc);
-			goods.setCurrentDescription(newDesc);
-			return goodsRepository.save(goods);
+			var savedNewDesc = goodsDescriptionRepository.save(newDesc);
+			goods.setCurrentDescription(savedNewDesc);
+			goods = goodsRepository.save(goods);
+			assert oldDesc != null;
+			goodsDescriptionRepository.delete(oldDesc);
 		}
+		return goods;
 	}
 
 	@Transactional
@@ -81,10 +85,10 @@ public class GoodsService {
 			return;
 		}
 		desc.setReviewStatus(GoodsReviewStatus.APPROVED);
-		desc.setReviewedTime(OffsetDateTime.now());
+		desc.setReviewedTime(OffsetDateTime.now(clock));
 		GoodsDescription oldDesc = desc.getGoods().getCurrentDescription();
 		desc.getGoods().setCurrentDescription(desc);
-		desc.getGoods().setOnShelfTime(OffsetDateTime.now());
+		desc.getGoods().setOnShelfTime(OffsetDateTime.now(clock));
 		goodsDescriptionRepository.save(desc);
 		goodsRepository.save(desc.getGoods());
 		if (oldDesc != null) {
@@ -94,15 +98,22 @@ public class GoodsService {
 
 	@Transactional
 	public void reviewRequestChange(GoodsDescription desc, String comments) {
-		desc.setReviewStatus(GoodsReviewStatus.CHANGE_REQUESTED);
-		desc.setReviewComments(comments);
-		desc.setReviewedTime(OffsetDateTime.now());
-		desc = goodsDescriptionRepository.save(desc);
 		Goods goods = desc.getGoods();
-		if (goods.getCurrentDescription() != null) {
+		var oldDesc = goods.getCurrentDescription();
+		if (oldDesc == desc) {
+			// 下架该商品
 			goods.setCurrentDescription(null);
 			goodsRepository.save(goods);
+			if (goodsDescriptionRepository.existsByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED)) {
+				// 若希望下架产品，且用户已提交新的更改，则删除当前展示信息（保留用户提交的新版信息）
+				goodsDescriptionRepository.delete(desc);
+				return;
+			}
 		}
+		desc.setReviewStatus(GoodsReviewStatus.CHANGE_REQUESTED);
+		desc.setReviewComments(comments);
+		desc.setReviewedTime(OffsetDateTime.now(clock));
+		goodsDescriptionRepository.save(desc);
 	}
 
 	public Page<Goods> getAll(Pageable pageable) {
@@ -115,11 +126,5 @@ public class GoodsService {
 
 	public Page<GoodsDescription> getAllChangeRequested(Pageable pageable) {
 		return goodsDescriptionRepository.findAllByReviewStatus(GoodsReviewStatus.CHANGE_REQUESTED, pageable);
-	}
-
-	private Long getCurrentUserId() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Principal p = (Principal) authentication.getPrincipal();
-		return p.getUserId();
 	}
 }
