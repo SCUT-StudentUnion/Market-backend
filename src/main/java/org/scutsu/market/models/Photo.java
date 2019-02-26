@@ -15,7 +15,7 @@ public class Photo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonView(Views.Minimum.class)
+	@JsonView({Views.Minimum.class, Views.Goods.UserAccessible.class})
 	private Long id;
 
 	@NotNull

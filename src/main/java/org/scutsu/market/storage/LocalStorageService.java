@@ -42,7 +42,6 @@ class LocalStoreProperties {
 @Slf4j
 public class LocalStorageService implements StorageService {
 
-
 	private final LocalStoreProperties config;
 
 	@Autowired
@@ -69,7 +68,7 @@ public class LocalStorageService implements StorageService {
 		File dest = uploadDir.resolve(fileName).toFile();
 
 		file.transferTo(dest);
-		log.info("上传成功后的文件路径：%s", dest.getPath());
+		log.info("上传成功后的文件路径：{}", dest.getPath());
 		return new StoreResult(fileName);
 	}
 
