@@ -1,12 +1,13 @@
 package org.scutsu.market.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.scutsu.market.models.Goods;
 import org.scutsu.market.models.GoodsDescription;
 import org.scutsu.market.models.Views;
+import org.scutsu.market.services.GoodsReadService;
 import org.scutsu.market.services.GoodsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +17,11 @@ import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/goods")
+@AllArgsConstructor
 public class GoodsController {
 
 	private final GoodsService goodsService;
-
-	@Autowired
-	public GoodsController(GoodsService goodsService) {
-		this.goodsService = goodsService;
-	}
+	private final GoodsReadService goodsReadService;
 
 	@PostMapping
 	@PreAuthorize("hasRole('USER')")
@@ -43,21 +41,21 @@ public class GoodsController {
 	@GetMapping
 	@JsonView(Views.Goods.List.class)
 	public PagedEntity<Goods> getAll(Pageable pageable) {
-		return new PagedEntity<>(goodsService.getAll(pageable));
+		return new PagedEntity<>(goodsReadService.getAll(pageable));
 	}
 
 	@GetMapping("/needReview")
 	@JsonView(Views.Goods.Admin.class)
 	@PreAuthorize("hasRole('ADMIN')")
 	public PagedEntity<GoodsDescription> getAllNeedReview(Pageable pageable) {
-		return new PagedEntity<>(goodsService.getAllNeedReview(pageable));
+		return new PagedEntity<>(goodsReadService.getAllNeedReview(pageable));
 	}
 
 	@GetMapping("/changeRequested")
 	@JsonView(Views.Goods.Admin.class)
 	@PreAuthorize("hasRole('ADMIN')")
 	public PagedEntity<GoodsDescription> getAllChangeRequested(Pageable pageable) {
-		return new PagedEntity<>(goodsService.getAllChangeRequested(pageable));
+		return new PagedEntity<>(goodsReadService.getAllChangeRequested(pageable));
 	}
 
 	@PostMapping("/{id}/review/approve")

@@ -7,8 +7,6 @@ import org.scutsu.market.models.GoodsReviewStatus;
 import org.scutsu.market.models.User;
 import org.scutsu.market.repositories.GoodsDescriptionRepository;
 import org.scutsu.market.repositories.GoodsRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,17 +112,5 @@ public class GoodsService {
 		desc.setReviewComments(comments);
 		desc.setReviewedTime(OffsetDateTime.now(clock));
 		goodsDescriptionRepository.save(desc);
-	}
-
-	public Page<Goods> getAll(Pageable pageable) {
-		return goodsRepository.findAllByCurrentDescriptionNotNull(pageable);
-	}
-
-	public Page<GoodsDescription> getAllNeedReview(Pageable pageable) {
-		return goodsDescriptionRepository.findAllByReviewStatus(GoodsReviewStatus.PENDING, pageable);
-	}
-
-	public Page<GoodsDescription> getAllChangeRequested(Pageable pageable) {
-		return goodsDescriptionRepository.findAllByReviewStatus(GoodsReviewStatus.CHANGE_REQUESTED, pageable);
 	}
 }

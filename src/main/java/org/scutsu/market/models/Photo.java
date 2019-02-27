@@ -3,11 +3,9 @@ package org.scutsu.market.models;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 
 @Data
 @Entity
@@ -19,6 +17,9 @@ public class Photo {
 	private Long id;
 
 	@NotNull
-	@JsonView(Views.Goods.List.class)
 	private String fileName;
+
+	@Transient
+	@JsonView(Views.Goods.Public.class)
+	private URI url;
 }
