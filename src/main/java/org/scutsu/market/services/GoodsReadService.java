@@ -35,6 +35,13 @@ public class GoodsReadService {
 		return page;
 	}
 
+	public Page<Goods> getAllByCategoryId(long categoryId, Pageable pageable) {
+		var page = goodsRepository.findAllByCurrentDescriptionCategoryId(categoryId, pageable);
+		var descriptions = page.get().map(Goods::getCurrentDescription);
+		populatePhotoUri(descriptions);
+		return page;
+	}
+
 	public Page<GoodsDescription> getAllNeedReview(Pageable pageable) {
 		var page = goodsDescriptionRepository.findAllByReviewStatus(GoodsReviewStatus.PENDING, pageable);
 		populatePhotoUri(page.get());
