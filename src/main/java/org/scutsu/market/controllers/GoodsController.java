@@ -44,6 +44,12 @@ public class GoodsController {
 		return new PagedEntity<>(goodsReadService.getAll(pageable));
 	}
 
+	@GetMapping("/{id}")
+	@JsonView(Views.Goods.Detail.class)
+	public Goods get(@PathVariable("id") long goodsId) {
+		return goodsReadService.get(goodsId);
+	}
+
 	@GetMapping("/needReview")
 	@JsonView(Views.Goods.Admin.class)
 	@PreAuthorize("hasRole('ADMIN')")

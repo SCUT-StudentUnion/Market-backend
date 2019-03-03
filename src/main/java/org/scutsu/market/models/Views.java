@@ -11,6 +11,9 @@ public class Views {
 		interface List extends Public {
 		}
 
+		interface Detail extends Public {
+		}
+
 		interface Admin extends Public {
 		}
 

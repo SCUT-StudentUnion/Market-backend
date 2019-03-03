@@ -18,7 +18,7 @@ public class Goods {
 	private Long id;
 
 	@ManyToOne
-	@JsonView(Views.Goods.List.class)
+	@JsonView(Views.Goods.Public.class)
 	@NotNull
 	private User releasedBy;
 
@@ -26,7 +26,7 @@ public class Goods {
 	private OffsetDateTime onShelfTime;
 
 	@ManyToOne
-	@JsonView(Views.Goods.List.class)
+	@JsonView({Views.Goods.List.class, Views.Goods.Detail.class})
 	@Nullable
 	private GoodsDescription currentDescription;
 
