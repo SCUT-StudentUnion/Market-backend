@@ -14,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
  * Error from {@code response.sendError(...)} will be routed here
  */
 @RestController
+@RequestMapping("${server.error.path:${error.path:/error}}")
 public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
 
 	private final ErrorAttributes errorAttributes;
