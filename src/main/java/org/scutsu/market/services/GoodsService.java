@@ -7,6 +7,7 @@ import org.scutsu.market.models.GoodsReviewStatus;
 import org.scutsu.market.models.User;
 import org.scutsu.market.repositories.GoodsDescriptionRepository;
 import org.scutsu.market.repositories.GoodsRepository;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,7 @@ public class GoodsService {
 	private final UserIdProvider userIdProvider;
 	private final Clock clock;
 
-	private void validate(GoodsDescription desc) {
+	private void validate(@NonNull GoodsDescription desc) {
 		Objects.requireNonNull(desc.getCategory());
 		Objects.requireNonNull(desc.getCategory().getId());
 	}

@@ -49,6 +49,7 @@ public class DefaultExceptionHandler {
 			httpStatusCode = HttpStatus.BAD_REQUEST;
 		} else {
 			apiError.setErrorCode("unknown");
+			e.printStackTrace();
 		}
 		var statusAnnotation = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
 		if (statusAnnotation != null) {

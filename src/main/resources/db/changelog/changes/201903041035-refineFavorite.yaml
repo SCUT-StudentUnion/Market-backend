@@ -1,0 +1,37 @@
+databaseChangeLog:
+- changeSet:
+      id: 1
+      author: huww98
+      changes:
+      - renameTable:
+            oldTableName: user_collected_goods
+            newTableName: favorite
+      - renameColumn:
+            tableName: favorite
+            columnDataType: bigint(20)
+            oldColumnName: user_id
+            newColumnName: collected_by_id
+      - renameColumn:
+            tableName: favorite
+            columnDataType: bigint(20)
+            oldColumnName: collected_goods_id
+            newColumnName: goods_id
+      - addNotNullConstraint:
+            tableName: favorite
+            columnName: collected_by_id
+            columnDataType: bigint(20)
+      - addNotNullConstraint:
+            tableName: favorite
+            columnName: goods_id
+            columnDataType: bigint(20)
+      - addPrimaryKey:
+            tableName: favorite
+            columnNames: collected_by_id, goods_id
+      - addColumn:
+            tableName: favorite
+            columns:
+            - column:
+                  name: collected_time
+                  type: datetime(3)
+                  constraints:
+                      nullable: false

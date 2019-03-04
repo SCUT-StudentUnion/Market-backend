@@ -16,9 +16,6 @@ public class User {
 	@OneToMany(mappedBy = "releasedBy")
 	private List<Goods> releasedGoods = new ArrayList<>();
 
-	@ManyToMany
-	private List<Goods> collectedGoods = new ArrayList<>();
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonView(Views.Minimum.class)

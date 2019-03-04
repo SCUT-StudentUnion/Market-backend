@@ -3,9 +3,11 @@ package org.scutsu.market.controllers;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.scutsu.market.models.Favorite;
 import org.scutsu.market.models.Goods;
 import org.scutsu.market.models.GoodsDescription;
 import org.scutsu.market.models.Views;
+import org.scutsu.market.services.FavoriteService;
 import org.scutsu.market.services.GoodsReadService;
 import org.scutsu.market.services.GoodsService;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ public class GoodsController {
 
 	private final GoodsService goodsService;
 	private final GoodsReadService goodsReadService;
+	private final FavoriteService favoriteService;
 
 	@PostMapping
 	@PreAuthorize("hasRole('USER')")
@@ -48,6 +51,27 @@ public class GoodsController {
 	@JsonView(Views.Goods.Detail.class)
 	public Goods get(@PathVariable("id") long goodsId) {
 		return goodsReadService.get(goodsId);
+	}
+
+	@GetMapping("/favorite")
+	@PreAuthorize("hasRole('USER')")
+	@JsonView(Views.Goods.List.class)
+	public PagedEntity<Favorite> getCollected(Pageable pageable) {
+		return new PagedEntity<>(goodsReadService.getFavorite(pageable));
+	}
+
+	@PostMapping("/{id}/addToFavorite")
+	@PreAuthorize("hasRole('USER')")
+	public SuccessResult addToFavorite(@PathVariable("id") long goodsId) {
+		favoriteService.add(goodsId);
+		return new SuccessResult();
+	}
+
+	@PostMapping("/{id}/deleteFromFavorite")
+	@PreAuthorize("hasRole('USER')")
+	public SuccessResult deleteFromFavorite(@PathVariable("id") long goodsId) {
+		favoriteService.delete(goodsId);
+		return new SuccessResult();
 	}
 
 	@GetMapping("/needReview")

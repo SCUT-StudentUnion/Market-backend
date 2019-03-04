@@ -1,10 +1,8 @@
 package org.scutsu.market.services;
 
 import lombok.AllArgsConstructor;
-import org.scutsu.market.models.Goods;
-import org.scutsu.market.models.GoodsDescription;
-import org.scutsu.market.models.GoodsReviewStatus;
-import org.scutsu.market.models.Photo;
+import org.scutsu.market.models.*;
+import org.scutsu.market.repositories.FavoriteRepository;
 import org.scutsu.market.repositories.GoodsDescriptionRepository;
 import org.scutsu.market.repositories.GoodsRepository;
 import org.springframework.data.domain.Page;
@@ -12,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Streamable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -20,7 +19,9 @@ import java.util.Objects;
 public class GoodsReadService {
 	private final GoodsRepository goodsRepository;
 	private final GoodsDescriptionRepository goodsDescriptionRepository;
+	private final FavoriteRepository favoriteRepository;
 	private final PhotoUriGenerator photoUriGenerator;
+	private final UserIdProvider userIdProvider;
 
 	private void populatePhotoUri(@NonNull GoodsDescription description) {
 		for (Photo photo : description.getPhotos()) {
@@ -67,5 +68,12 @@ public class GoodsReadService {
 		assert goods.getCurrentDescription() != null;
 		populatePhotoUri(goods.getCurrentDescription());
 		return goods;
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Favorite> getFavorite(Pageable pageable) {
+		var page = favoriteRepository.findAllByCollectedById(userIdProvider.getCurrentUserId(), pageable);
+		populateGoodsPhotoUri(page.map(Favorite::getGoods));
+		return page;
 	}
 }
