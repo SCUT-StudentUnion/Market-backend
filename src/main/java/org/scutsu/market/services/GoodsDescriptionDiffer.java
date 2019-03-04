@@ -13,6 +13,9 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * 判断商品描述是否的确有更新，是否更新了需要审核的内容，以减少不必要的审核。
+ */
 @Service
 public class GoodsDescriptionDiffer {
 

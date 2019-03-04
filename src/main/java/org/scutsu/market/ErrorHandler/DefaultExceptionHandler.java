@@ -1,17 +1,18 @@
-package org.scutsu.market.controllers;
+package org.scutsu.market.ErrorHandler;
 
 import lombok.Data;
-import org.scutsu.market.ApiErrorCode;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.ConstraintViolationException;
+import java.util.stream.Stream;
 
 @Data
 class ApiError {
@@ -42,10 +43,22 @@ public class DefaultExceptionHandler {
 	public ResponseEntity<ApiError> defaultErrorHandler(Throwable e) {
 		ApiError apiError = new ApiError();
 		apiError.setMessage(e.getMessage());
-		var apiErrorCodeAnnotation = AnnotationUtils.findAnnotation(e.getClass(), ApiErrorCode.class);
 		HttpStatus httpStatusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-		if (apiErrorCodeAnnotation != null) {
-			apiError.setErrorCode(apiErrorCodeAnnotation.value());
+		String staticErrorCode = null;
+		String dynamicErrorCode = null;
+
+		var apiErrorCodePrefixAnnotation = AnnotationUtils.findAnnotation(e.getClass(), ApiErrorCodePrefix.class);
+		if (apiErrorCodePrefixAnnotation != null) {
+			staticErrorCode = apiErrorCodePrefixAnnotation.value();
+		}
+		if (e instanceof ApiErrorCode) {
+			dynamicErrorCode = ((ApiErrorCode) e).getErrorCode();
+		}
+		var errorCode = Stream.of(staticErrorCode, dynamicErrorCode)
+			.filter(StringUtils::hasText)
+			.reduce((a, b) -> a + "." + b);
+		if (errorCode.isPresent()) {
+			apiError.setErrorCode(errorCode.get());
 			httpStatusCode = HttpStatus.BAD_REQUEST;
 		} else {
 			apiError.setErrorCode("unknown");

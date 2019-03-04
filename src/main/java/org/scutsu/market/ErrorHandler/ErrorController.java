@@ -1,4 +1,4 @@
-package org.scutsu.market.controllers;
+package org.scutsu.market.ErrorHandler;
 
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;

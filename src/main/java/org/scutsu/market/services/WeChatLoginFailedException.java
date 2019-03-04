@@ -1,28 +1,20 @@
 package org.scutsu.market.services;
 
-import org.scutsu.market.ApiErrorCode;
+import org.scutsu.market.ErrorHandler.ApiErrorCodePrefix;
+import org.scutsu.market.ErrorHandler.ApiErrorException;
 
-@ApiErrorCode("we-chat-login-unknown")
-public class WeChatLoginFailedException extends RuntimeException {
+@ApiErrorCodePrefix("we-chat")
+public class WeChatLoginFailedException extends ApiErrorException {
+
 	WeChatLoginFailedException(String message) {
-		super(message);
+		this("", message);
+	}
+
+	WeChatLoginFailedException(String errorCode, String message) {
+		super(errorCode, message);
 	}
 
 	WeChatLoginFailedException(Throwable e) {
-		super(e);
-	}
-}
-
-@ApiErrorCode("we-chat-login-invalid-code")
-class WeChatLoginInvalidCodeException extends WeChatLoginFailedException {
-	WeChatLoginInvalidCodeException(String message) {
-		super(message);
-	}
-}
-
-@ApiErrorCode("we-chat-login-frequency-limited")
-class WeChatLoginFrequencyLimitedException extends WeChatLoginFailedException {
-	WeChatLoginFrequencyLimitedException(String message) {
-		super(message);
+		super("", e);
 	}
 }

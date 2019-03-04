@@ -10,6 +10,22 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 本类表示商品发布者一次提交的商品信息，用于{@link Goods}中。该实体对于用户来说是不可变的，即每次更新商品信息时都创建一个新的
+ * 实体，而不是修改现有实体。
+ *
+ * <p>
+ * 将商品发布者提交的信息单独分离为一个实体有以下好处：
+ * <ul>
+ * <li>同一个商品可以同时拥有多个版本的描述信息。目前最多两个版本，一个版本用于线上展示，一个提交管理员审核。</li>
+ * <li>
+ * 审核操作均针对该实体完成（而非{@link Goods}）。该实体对用户不可变可以保证：管理员在审核时看到的描述和他同意上线的版本是一样的。
+ * </li>
+ * </ul>
+ * </p>
+ *
+ * @see Goods
+ */
 @Entity
 @Data
 public class GoodsDescription {

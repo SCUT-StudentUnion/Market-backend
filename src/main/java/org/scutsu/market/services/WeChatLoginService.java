@@ -120,13 +120,10 @@ public class WeChatLoginService {
 
 			CodeToSessionResult result = objectMapper.readValue(response.body(), CodeToSessionResult.class);
 			if (!result.isSuccess()) {
-				switch (result.getErrorCode()) {
-					case CodeToSessionErrorCode.INVALID_CODE:
-						throw new WeChatLoginInvalidCodeException(result.getErrorMessage());
-					case CodeToSessionErrorCode.FREQUENCY_LIMITED:
-						throw new WeChatLoginFrequencyLimitedException(result.getErrorMessage());
-				}
-				throw new WeChatLoginFailedException("jscode2session failed. code: " + result.getErrorCode() + " message: " + result.getErrorMessage());
+				String errorCode = result.getErrorCode() == CodeToSessionErrorCode.INVALID_CODE ? "invalid-code"
+					: result.getErrorCode() == CodeToSessionErrorCode.FREQUENCY_LIMITED ? "frequency-limited"
+					: "";
+				throw new WeChatLoginFailedException(errorCode, "jscode2session failed. code: " + result.getErrorCode() + " message: " + result.getErrorMessage());
 			}
 
 			return loginOpenId(result.getOpenId());

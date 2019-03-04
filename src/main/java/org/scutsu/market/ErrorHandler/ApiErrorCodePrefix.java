@@ -1,4 +1,4 @@
-package org.scutsu.market;
+package org.scutsu.market.ErrorHandler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ApiErrorCode {
-	String value();
+public @interface ApiErrorCodePrefix {
+	String value() default "";
 }

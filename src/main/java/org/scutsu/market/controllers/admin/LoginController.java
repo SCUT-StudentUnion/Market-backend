@@ -1,7 +1,7 @@
 package org.scutsu.market.controllers.admin;
 
 import lombok.Data;
-import org.scutsu.market.ApiErrorCode;
+import org.scutsu.market.ErrorHandler.ApiErrorCodePrefix;
 import org.scutsu.market.models.DTOs.LoginResult;
 import org.scutsu.market.security.JwtTokenProvider;
 import org.scutsu.market.security.Principal;
@@ -49,7 +49,7 @@ public class LoginController {
 		private String password;
 	}
 
-	@ApiErrorCode("admin-login-bad-credentials")
+	@ApiErrorCodePrefix("admin-login.bad-credentials")
 	class AdminBadCredentialsException extends RuntimeException {
 		AdminBadCredentialsException(Throwable e) {
 			super("用户名或密码错误", e);
