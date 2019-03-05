@@ -3,7 +3,7 @@ package org.scutsu.market.controllers.wechat;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.scutsu.market.models.DTOs.LoginResult;
-import org.scutsu.market.services.WeChatLoginService;
+import org.scutsu.market.services.wechat.WeChatLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

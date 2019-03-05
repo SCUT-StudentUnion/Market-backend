@@ -1,25 +1,22 @@
-package org.scutsu.market.services;
+package org.scutsu.market.services.wechat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.scutsu.market.ErrorHandler.ApiErrorException;
 import org.scutsu.market.models.User;
 import org.scutsu.market.repositories.UserRepository;
 import org.scutsu.market.security.JwtTokenProvider;
 import org.scutsu.market.security.Principal;
+import org.scutsu.market.services.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 @ConfigurationProperties(prefix = "we-chat")
 @Validated
@@ -32,35 +29,23 @@ class WeChatProperties {
 
 	@NotNull
 	private String secret;
-
-	@NotNull
-	private String grantType = "authorization_code";
 }
 
 class CodeToSessionErrorCode {
-	static final int SUCCESS = 0,
-		BUSY = -1,
-		INVALID_CODE = 40029,
+	static final int INVALID_CODE = 40029,
 		FREQUENCY_LIMITED = 45011;
 }
 
 @Data
-class CodeToSessionResult {
+@EqualsAndHashCode(callSuper = true)
+class CodeToSessionResult extends ApiResult {
 
 	@JsonProperty("openid")
-	private final String openId;
+	private String openId;
 	@JsonProperty("session_key")
-	private final String sessionKey;
+	private String sessionKey;
 	@JsonProperty("unionid")
-	private final String unionId;
-	@JsonProperty("errcode")
-	private final int errorCode;
-	@JsonProperty("errmsg")
-	private final String errorMessage;
-
-	boolean isSuccess() {
-		return errorCode == CodeToSessionErrorCode.SUCCESS;
-	}
+	private String unionId;
 }
 
 @Service
@@ -68,14 +53,14 @@ public class WeChatLoginService {
 
 	private final JwtTokenProvider jwtTokenProvider;
 	private final WeChatProperties config;
-	private final ObjectMapper objectMapper;
+	private final ApiClient apiClient;
 	private final UserRepository userRepository;
 
 	@Autowired
-	public WeChatLoginService(JwtTokenProvider jwtTokenProvider, WeChatProperties config, ObjectMapper objectMapper, UserRepository userRepository) {
+	public WeChatLoginService(JwtTokenProvider jwtTokenProvider, WeChatProperties config, ApiClient apiClient, UserRepository userRepository) {
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.config = config;
-		this.objectMapper = objectMapper;
+		this.apiClient = apiClient;
 		this.userRepository = userRepository;
 	}
 
@@ -104,21 +89,11 @@ public class WeChatLoginService {
 			.queryParam("appid", config.getAppId())
 			.queryParam("secret", config.getSecret())
 			.queryParam("js_code", code)
-			.queryParam("grant_type", config.getGrantType())
+			.queryParam("grant_type", "authorization_code")
 			.build().toUri();
-		HttpRequest request = HttpRequest.newBuilder()
-			.uri(uri)
-			.build();
-		HttpClient client = HttpClient.newHttpClient();
 
 		try {
-			var response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-
-			if (response.statusCode() != HttpStatus.OK.value()) {
-				throw new WeChatLoginFailedException("jscode2session returned unexpected http status code " + response.statusCode());
-			}
-
-			CodeToSessionResult result = objectMapper.readValue(response.body(), CodeToSessionResult.class);
+			CodeToSessionResult result = apiClient.get(uri, CodeToSessionResult.class);
 			if (!result.isSuccess()) {
 				String errorCode = result.getErrorCode() == CodeToSessionErrorCode.INVALID_CODE ? "invalid-code"
 					: result.getErrorCode() == CodeToSessionErrorCode.FREQUENCY_LIMITED ? "frequency-limited"
@@ -127,7 +102,7 @@ public class WeChatLoginService {
 			}
 
 			return loginOpenId(result.getOpenId());
-		} catch (IOException | InterruptedException e) {
+		} catch (ApiErrorException e) {
 			throw new WeChatLoginFailedException(e);
 		}
 	}

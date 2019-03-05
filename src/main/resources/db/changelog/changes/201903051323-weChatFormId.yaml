@@ -1,0 +1,11 @@
+databaseChangeLog:
+- changeSet:
+      id: 1
+      author: huww98
+      changes:
+      - addColumn:
+            tableName: goods_description
+            columns:
+            - column:
+                  name: we_chat_form_id
+                  type: varchar(255)

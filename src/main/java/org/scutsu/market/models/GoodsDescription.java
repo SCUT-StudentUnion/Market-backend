@@ -3,6 +3,7 @@ package org.scutsu.market.models;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -90,4 +91,8 @@ public class GoodsDescription {
 	@Lob
 	@JsonView(Views.Goods.Admin.class)
 	private String reviewComments;
+
+	@Nullable
+	@JsonView(Views.Goods.UserAccessible.class)
+	private String weChatFormId;
 }

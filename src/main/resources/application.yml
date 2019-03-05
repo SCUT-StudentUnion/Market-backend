@@ -5,3 +5,13 @@ spring:
         properties:
             hibernate.dialect: org.hibernate.dialect.MySQL57Dialect
         open-in-view: false
+we-chat:
+    template-message:
+        templates:
+            review-approved:
+                template-id: CfgbsJLtz2nn9NPj0KSDY2gpJwyaVz8SHp8xRPY6tbs
+                keywords:
+                    title: keyword1
+                    remark: keyword2
+                    submitted-time: keyword3
+                    reviewed-time: keyword4

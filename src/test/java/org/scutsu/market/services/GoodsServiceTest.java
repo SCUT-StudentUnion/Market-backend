@@ -22,6 +22,9 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * @see GoodsService
+ */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class GoodsServiceTest {
 

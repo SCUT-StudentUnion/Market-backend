@@ -1,13 +1,17 @@
 package org.scutsu.market.services;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.scutsu.market.models.Goods;
 import org.scutsu.market.models.GoodsDescription;
 import org.scutsu.market.models.GoodsReviewStatus;
 import org.scutsu.market.models.User;
 import org.scutsu.market.repositories.GoodsDescriptionRepository;
 import org.scutsu.market.repositories.GoodsRepository;
+import org.scutsu.market.services.wechat.ReviewApprovedMessage;
+import org.scutsu.market.services.wechat.WeChatTemplateMessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,14 +19,27 @@ import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
+/**
+ * 审核状态机的实现
+ *
+ * <p><img src="doc-files/review-state-machine.png" width="1280" alt="review state machine"/></p>
+ */
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GoodsService {
 	private final GoodsRepository goodsRepository;
 	private final GoodsDescriptionRepository goodsDescriptionRepository;
 	private final GoodsDescriptionDiffer goodsDescriptionDiffer;
 	private final UserIdProvider userIdProvider;
 	private final Clock clock;
+
+	@Nullable
+	private WeChatTemplateMessageService weChatTemplateMessageService;
+
+	@Autowired(required = false)
+	public void setWeChatTemplateMessageService(WeChatTemplateMessageService service) {
+		this.weChatTemplateMessageService = service;
+	}
 
 	private void validate(@NonNull GoodsDescription desc) {
 		Objects.requireNonNull(desc.getCategory());
@@ -88,10 +105,20 @@ public class GoodsService {
 		GoodsDescription oldDesc = desc.getGoods().getCurrentDescription();
 		desc.getGoods().setCurrentDescription(desc);
 		desc.getGoods().setOnShelfTime(OffsetDateTime.now(clock));
-		goodsDescriptionRepository.save(desc);
+		var savedDesc = goodsDescriptionRepository.save(desc);
 		goodsRepository.save(desc.getGoods());
 		if (oldDesc != null) {
 			goodsDescriptionRepository.delete(oldDesc);
+		}
+
+		if (weChatTemplateMessageService != null) {
+			weChatTemplateMessageService.sendReviewApproved(
+				ReviewApprovedMessage.builder()
+					.title(savedDesc.getTitle())
+					.reviewedTime(savedDesc.getReviewedTime().toLocalDateTime())
+					.submittedTime(savedDesc.getCreatedTime().toLocalDateTime())
+					.build(),
+				savedDesc.getWeChatFormId(), savedDesc.getGoods().getReleasedBy().getWeChatOpenId());
 		}
 	}
 

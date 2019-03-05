@@ -2,7 +2,7 @@ package org.scutsu.market.security;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.scutsu.market.services.WeChatLoginService;
+import org.scutsu.market.services.wechat.WeChatLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
