@@ -1,6 +1,7 @@
 package org.scutsu.market.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.scutsu.market.models.Goods;
 import org.scutsu.market.models.GoodsDescription;
 import org.scutsu.market.models.GoodsReviewStatus;
@@ -26,6 +27,7 @@ import java.util.Objects;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GoodsService {
 	private final GoodsRepository goodsRepository;
 	private final GoodsDescriptionRepository goodsDescriptionRepository;
@@ -110,6 +112,7 @@ public class GoodsService {
 		if (oldDesc != null) {
 			goodsDescriptionRepository.delete(oldDesc);
 		}
+		log.info("GoodsDescription {} review approved", savedDesc.getId());
 
 		if (weChatTemplateMessageService != null) {
 			weChatTemplateMessageService.sendReviewApproved(

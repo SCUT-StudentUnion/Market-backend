@@ -120,11 +120,13 @@ public class WeChatTemplateMessageService {
 			switch (result.getErrorCode()) {
 				case SendTemplateMessageErrorCode.FORM_ID_ALREADY_USED:
 				case SendTemplateMessageErrorCode.FORM_ID_INVALID_OR_EXPIRED:
-					log.info("Failed: {}", result.getErrorMessage());
+					log.info("Send {} failed: {}", templateName, result.getErrorMessage());
 					break;
 				default:
-					log.error("Failed: {}", result.getErrorMessage());
+					log.error("Send {} failed: {}", templateName, result.getErrorMessage());
 			}
+		} else {
+			log.info("Send {} succeeded", templateName);
 		}
 	}
 }

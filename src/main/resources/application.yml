@@ -15,3 +15,11 @@ we-chat:
                     remark: keyword2
                     submitted-time: keyword3
                     reviewed-time: keyword4
+            review-change-requested:
+                template-id: K-6DRvZwVZxNmJE9MsBBp5gZDQXckPTFv8y3oH5felM
+                keywords:
+                    title: keyword1
+                    comments: keyword2
+                    remark: keyword3
+                    submitted-time: keyword4
+                    reviewed-time: keyword5
