@@ -81,6 +81,19 @@ public class WeChatTemplateMessageService {
 		send("review-approved", messageMap, formId, openId);
 	}
 
+	@Async
+	public void sendReviewChangeRequested(ReviewChangeRequestedMessage message, @Nullable String formId, String openId){
+		DateTimeFormatter formatter=DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+		Map<String,String> messageMap=Map.of(
+			"titile",message.getTitle(),
+			"comment",message.getComment(),
+			"remark", Optional.ofNullable(message.getRemark()).orElse("很抱歉，你的商品未能通过审核，你可以根据审核结果修改商品信息后重新发起审核"),
+			"submitted-time",message.getSubmittedTime().format(formatter),
+			"reviewed-time",message.getReviewedTime().format(formatter)
+		);
+		send("review-change-requested",messageMap,formId,openId);
+	}
+
 	private void send(String templateName, Map<String, String> message, @Nullable String formId, String openId) {
 		if (!properties.getTemplates().containsKey(templateName)) {
 			log.warn("template {} not configured", templateName);
