@@ -19,7 +19,7 @@ we-chat:
                 template-id: K-6DRvZwVZxNmJE9MsBBp5gZDQXckPTFv8y3oH5felM
                 keywords:
                     title: keyword1
-                    comments: keyword2
+                    comment: keyword2
                     remark: keyword3
                     submitted-time: keyword4
                     reviewed-time: keyword5

@@ -1,0 +1,10 @@
+databaseChangeLog:
+- changeSet:
+      id: 1
+      author: huww98
+      changes:
+      - renameColumn:
+            tableName: goods_description
+            columnDataType: text
+            oldColumnName: review_comments
+            newColumnName: review_comment

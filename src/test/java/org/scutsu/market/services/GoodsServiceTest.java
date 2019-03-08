@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class GoodsServiceTest {
 
 	private static final long currentUserId = 1268L;
-	private static final String reviewComments = "This is some comments";
+	private static final String reviewComment = "This is my comment";
 	private static final OffsetDateTime lastReviewTime = OffsetDateTime.parse("2007-12-03T10:15:30+08:00");
 	@Mock
 	private GoodsRepository goodsRepository;
@@ -67,7 +67,7 @@ public class GoodsServiceTest {
 		assertOffShelf(goods, desc);
 		assertEquals(GoodsReviewStatus.CHANGE_REQUESTED, desc.getReviewStatus());
 		assertEquals(OffsetDateTime.now(clock), desc.getReviewedTime());
-		assertEquals(GoodsServiceTest.reviewComments, desc.getReviewComments());
+		assertEquals(GoodsServiceTest.reviewComment, desc.getReviewComment());
 	}
 
 	private void assertPendingOnShelf(Goods goods, GoodsDescription desc) {
@@ -115,7 +115,7 @@ public class GoodsServiceTest {
 	}
 
 	private void assertReviewInfoCopied(GoodsDescription desc) {
-		assertEquals(reviewComments, desc.getReviewComments());
+		assertEquals(reviewComment, desc.getReviewComment());
 		assertEquals(lastReviewTime, desc.getReviewedTime());
 	}
 
@@ -216,7 +216,7 @@ public class GoodsServiceTest {
 	private GoodsDescription buildChangeRequestedDescription() {
 		var desc = new GoodsDescription();
 		desc.setReviewStatus(GoodsReviewStatus.CHANGE_REQUESTED);
-		desc.setReviewComments(reviewComments);
+		desc.setReviewComment(reviewComment);
 		desc.setReviewedTime(lastReviewTime);
 		return desc;
 	}
@@ -262,11 +262,11 @@ public class GoodsServiceTest {
 	public void requestChange() {
 		var desc = buildOffShelfPendingDescription();
 
-		goodsService.reviewRequestChange(desc, reviewComments);
+		goodsService.reviewRequestChange(desc, reviewComment);
 
 		verify(goodsDescriptionRepository).save(desc);
 		assertEquals(GoodsReviewStatus.CHANGE_REQUESTED, desc.getReviewStatus());
-		assertEquals(reviewComments, desc.getReviewComments());
+		assertEquals(reviewComment, desc.getReviewComment());
 		assertEquals(OffsetDateTime.now(clock), desc.getReviewedTime());
 	}
 
@@ -277,7 +277,7 @@ public class GoodsServiceTest {
 		assert desc != null;
 		when(goodsDescriptionRepository.existsByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED)).thenReturn(false);
 
-		goodsService.reviewRequestChange(desc, reviewComments);
+		goodsService.reviewRequestChange(desc, reviewComment);
 
 		verify(goodsRepository).save(goods);
 		verify(goodsDescriptionRepository).save(desc);
@@ -291,7 +291,7 @@ public class GoodsServiceTest {
 		assert desc != null;
 		when(goodsDescriptionRepository.existsByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED)).thenReturn(true);
 
-		goodsService.reviewRequestChange(desc, reviewComments);
+		goodsService.reviewRequestChange(desc, reviewComment);
 
 		var inOrder = inOrder(goodsDescriptionRepository, goodsRepository);
 		inOrder.verify(goodsRepository).save(goods);

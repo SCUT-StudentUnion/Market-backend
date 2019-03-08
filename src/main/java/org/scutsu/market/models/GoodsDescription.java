@@ -82,15 +82,15 @@ public class GoodsDescription {
 	@JsonView(Views.Goods.Public.class)
 	private OffsetDateTime createdTime;
 
-	@JsonView(Views.Goods.Admin.class)
+	@JsonView(Views.Goods.Self.class)
 	private OffsetDateTime reviewedTime;
 
-	@JsonView(Views.Goods.Admin.class)
+	@JsonView(Views.Goods.Self.class)
 	private GoodsReviewStatus reviewStatus;
 
 	@Lob
-	@JsonView(Views.Goods.Admin.class)
-	private String reviewComments;
+	@JsonView(Views.Goods.Self.class)
+	private String reviewComment;
 
 	@Nullable
 	@JsonView(Views.Goods.UserAccessible.class)

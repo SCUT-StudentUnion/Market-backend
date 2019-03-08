@@ -47,4 +47,8 @@ public class Goods {
 	@Nullable
 	private GoodsDescription currentDescription;
 
+	@JsonView(Views.Goods.Self.class)
+	public boolean isPublished() {
+		return currentDescription != null;
+	}
 }

@@ -79,7 +79,7 @@ public class GoodsService {
 			var previousChangeRequestedDesc =
 				goodsDescriptionRepository.findByGoodsIdAndReviewStatus(goods.getId(), GoodsReviewStatus.CHANGE_REQUESTED);
 			previousChangeRequestedDesc.ifPresent(d -> {
-				newDesc.setReviewComments(d.getReviewComments());
+				newDesc.setReviewComment(d.getReviewComment());
 				newDesc.setReviewedTime(d.getReviewedTime());
 			});
 			goodsDescriptionRepository.deleteByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED);
@@ -126,7 +126,7 @@ public class GoodsService {
 	}
 
 	@Transactional
-	public void reviewRequestChange(GoodsDescription desc, String comments) {
+	public void reviewRequestChange(GoodsDescription desc, String comment) {
 		Goods goods = desc.getGoods();
 		var oldDesc = goods.getCurrentDescription();
 		if (oldDesc == desc) {
@@ -140,7 +140,7 @@ public class GoodsService {
 			}
 		}
 		desc.setReviewStatus(GoodsReviewStatus.CHANGE_REQUESTED);
-		desc.setReviewComments(comments);
+		desc.setReviewComment(comment);
 		desc.setReviewedTime(OffsetDateTime.now(clock));
 		goodsDescriptionRepository.save(desc);
 	}

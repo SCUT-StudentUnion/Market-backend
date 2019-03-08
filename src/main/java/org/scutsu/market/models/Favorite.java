@@ -14,15 +14,18 @@ public class Favorite {
 
 	@EmbeddedId
 	private PK pk = new PK();
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@NotNull
 	@MapsId("collectedById")
 	private User collectedBy;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@NotNull
 	@MapsId("goodsId")
 	@JsonView(Views.Goods.List.class)
 	private Goods goods;
+
 	@NotNull
 	@JsonView(Views.Goods.List.class)
 	private OffsetDateTime collectedTime;

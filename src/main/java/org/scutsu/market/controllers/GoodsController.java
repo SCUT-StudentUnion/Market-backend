@@ -100,14 +100,14 @@ public class GoodsController {
 	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Minimum.class)
 	public GoodsDescription reviewRequestChange(@PathVariable("id") GoodsDescription desc,
-									@RequestBody @Valid RequestChangeForm comments) {
-		goodsService.reviewRequestChange(desc, comments.getComments());
+												@RequestBody @Valid RequestChangeForm comment) {
+		goodsService.reviewRequestChange(desc, comment.getComment());
 		return desc;
 	}
 
 	@Data
 	private static class RequestChangeForm {
 		@NotNull
-		private String comments;
+		private String comment;
 	}
 }
