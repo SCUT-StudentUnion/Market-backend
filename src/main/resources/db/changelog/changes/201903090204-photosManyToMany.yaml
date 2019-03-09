@@ -1,0 +1,32 @@
+databaseChangeLog:
+- changeSet:
+      id: 1
+      author: huww98
+      changes:
+      - dropForeignKeyConstraint:
+            baseTableName: goods_description_photos
+            constraintName: fk_goods_photos_photo
+      - dropForeignKeyConstraint:
+            baseTableName: goods_description_photos
+            constraintName: fk_goods_photos_goods
+      - dropUniqueConstraint:
+            tableName: goods_description_photos
+            constraintName: photos_id
+      - dropUniqueConstraint:
+            tableName: goods_description_photos
+            constraintName: fk_goods_photos_goods
+      - addPrimaryKey:
+            tableName: goods_description_photos
+            columnNames: goods_description_id, photos_id
+      - addForeignKeyConstraint:
+            baseTableName: goods_description_photos
+            baseColumnNames: photos_id
+            constraintName: fk_goods_photos_photo
+            referencedTableName: photo
+            referencedColumnNames: id
+      - addForeignKeyConstraint:
+            baseTableName: goods_description_photos
+            baseColumnNames: goods_description_id
+            constraintName: fk_goods_photos_goods
+            referencedTableName: goods_description
+            referencedColumnNames: id

@@ -37,10 +37,10 @@ public class GoodsDescription {
 	private Long id;
 
 	@ManyToOne(optional = false)
-	@JsonView(Views.Goods.Admin.class)
+	@JsonView(Views.Goods.Self.class)
 	private Goods goods;
 
-	@OneToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JsonView({Views.Goods.Public.class, Views.Goods.UserAccessible.class})
 	private List<Photo> photos = new ArrayList<>();
 

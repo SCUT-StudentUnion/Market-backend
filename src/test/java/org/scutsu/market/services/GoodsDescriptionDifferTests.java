@@ -100,27 +100,33 @@ public class GoodsDescriptionDifferTests {
 	public void list() {
 		GoodsDescription base = new GoodsDescription();
 		GoodsDescription working = new GoodsDescription();
-		base.getPhotos().add(new Photo());
-		base.getPhotos().get(0).setId(10L);
-		base.getPhotos().get(0).setFileName("test-photo.jpg");
-		base.getPhotos().add(new Photo());
-		base.getPhotos().get(1).setId(11L);
-		base.getPhotos().get(1).setFileName("test-photo2.jpg");
+		var newPhoto = new Photo();
+		newPhoto.setId(10L);
+		newPhoto.setFileName("test-photo.jpg");
+		base.getPhotos().add(newPhoto);
+		newPhoto = new Photo();
+		newPhoto.setId(11L);
+		newPhoto.setFileName("test-photo2.jpg");
+		base.getPhotos().add(newPhoto);
 
-		working.getPhotos().add(new Photo());
-		working.getPhotos().get(0).setId(10L);
-		working.getPhotos().add(new Photo());
-		working.getPhotos().get(1).setId(11L);
+		newPhoto = new Photo();
+		newPhoto.setId(10L);
+		working.getPhotos().add(newPhoto);
+		newPhoto = new Photo();
+		newPhoto.setId(11L);
+		working.getPhotos().add(newPhoto);
 
 		GoodsDescriptionDiffer.Diff diff1 = goodsDescriptionDiffer.checkDiff(base, working);
 
 		assertFalse(diff1.isUpdated());
 
-		working.getPhotos().get(1).setId(12L);
+		working.getPhotos().remove(newPhoto);
+		newPhoto.setId(12L);
+		working.getPhotos().add(newPhoto);
 		GoodsDescriptionDiffer.Diff diff2 = goodsDescriptionDiffer.checkDiff(base, working);
 		assertTrue(diff2.isUpdated());
 
-		working.getPhotos().remove(1);
+		working.getPhotos().remove(newPhoto);
 		GoodsDescriptionDiffer.Diff diff3 = goodsDescriptionDiffer.checkDiff(base, working);
 		assertTrue(diff3.isUpdated());
 	}

@@ -62,8 +62,7 @@ public class GoodsReadService {
 	}
 
 	public Goods get(long goodsId) {
-		var goodsOptional = goodsRepository.findByIdAndCurrentDescriptionNotNull(goodsId);
-		var goods = goodsOptional.orElseThrow();
+		var goods = goodsRepository.findByIdAndCurrentDescriptionNotNull(goodsId).orElseThrow();
 
 		assert goods.getCurrentDescription() != null;
 		populatePhotoUri(goods.getCurrentDescription());
@@ -75,5 +74,18 @@ public class GoodsReadService {
 		var page = favoriteRepository.findAllByCollectedById(userIdProvider.getCurrentUserId(), pageable);
 		populateGoodsPhotoUri(page.map(Favorite::getGoods));
 		return page;
+	}
+
+	@Transactional(readOnly = true)
+	public Page<GoodsDescription> getMy(Pageable pageable) {
+		var page = goodsDescriptionRepository.findAllByGoodsReleasedById(userIdProvider.getCurrentUserId(), pageable);
+		populatePhotoUri(page);
+		return page;
+	}
+
+	public GoodsDescription getMy(long descriptionId) {
+		var desc = goodsDescriptionRepository.findByIdAndGoodsReleasedById(descriptionId, userIdProvider.getCurrentUserId()).orElseThrow();
+		populatePhotoUri(desc);
+		return desc;
 	}
 }

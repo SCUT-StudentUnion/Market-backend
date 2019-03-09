@@ -60,6 +60,20 @@ public class GoodsController {
 		return new PagedEntity<>(goodsReadService.getFavorite(pageable));
 	}
 
+	@GetMapping("/my")
+	@PreAuthorize("hasRole('USER')")
+	@JsonView(Views.Goods.Self.class)
+	public PagedEntity<GoodsDescription> getAllMy(Pageable pageable) {
+		return new PagedEntity<>(goodsReadService.getMy(pageable));
+	}
+
+	@GetMapping("/my/{id}")
+	@PreAuthorize("hasRole('USER')")
+	@JsonView(Views.Goods.Self.class)
+	public GoodsDescription getMy(@PathVariable("id") long descId) {
+		return goodsReadService.getMy(descId);
+	}
+
 	@PostMapping("/{id}/addToFavorite")
 	@PreAuthorize("hasRole('USER')")
 	public SuccessResult addToFavorite(@PathVariable("id") long goodsId) {
