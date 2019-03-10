@@ -66,8 +66,9 @@ public class GoodsService {
 	}
 
 	@Transactional
-	public Goods update(Goods goods, GoodsDescription newDesc) {
+	public Goods update(long goodsId, GoodsDescription newDesc) {
 		validate(newDesc);
+		Goods goods = goodsRepository.findForUpdateByIdAndReleasedById(goodsId, userIdProvider.getCurrentUserId()).orElseThrow();
 		GoodsDescription oldDesc = goods.getCurrentDescription();
 		GoodsDescriptionDiffer.Diff descDiff = goodsDescriptionDiffer.checkDiff(oldDesc, newDesc);
 		if (!descDiff.isUpdated() && !goodsDescriptionRepository.existsByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED)) {

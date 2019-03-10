@@ -47,8 +47,9 @@ public class GoodsDescription {
 	@JsonView(Views.Minimum.class)
 	private Long id;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JsonView(Views.Goods.Self.class)
+	@NotNull
 	private Goods goods;
 
 	@ManyToMany

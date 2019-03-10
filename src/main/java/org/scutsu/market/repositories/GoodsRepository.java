@@ -16,5 +16,8 @@ public interface GoodsRepository extends CrudRepository<Goods, Long> {
 	Page<Goods> findAllByCurrentDescriptionCategoryId(long id, Pageable pageable);
 
 	@EntityGraph("Goods.publicDetail")
-	Optional<Goods> findByIdAndCurrentDescriptionNotNull(Long id);
+	Optional<Goods> findByIdAndCurrentDescriptionNotNull(long id);
+
+	@EntityGraph("Goods.forUpdate")
+	Optional<Goods> findForUpdateByIdAndReleasedById(long id, long userId);
 }

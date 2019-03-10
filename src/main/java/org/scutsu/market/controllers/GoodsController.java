@@ -34,11 +34,11 @@ public class GoodsController {
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('USER') && #goods.releasedBy.id == principal.userId || hasRole('ADMIN')")
+	@PreAuthorize("hasRole('USER')")
 	@JsonView(Views.Minimum.class)
-	public Goods update(@PathVariable("id") Goods goods,
+	public Goods update(@PathVariable("id") long goodsId,
 						@RequestBody @JsonView(Views.Goods.UserAccessible.class) GoodsDescription desc) {
-		return goodsService.update(goods, desc);
+		return goodsService.update(goodsId, desc);
 	}
 
 	@GetMapping

@@ -127,8 +127,8 @@ public class GoodsServiceTest {
 		when(goodsDescriptionDiffer.checkDiff(null, newDesc)).thenReturn(GoodsDescriptionDiffer.Diff.NEED_REVIEW);
 		when(goodsDescriptionRepository.findByGoodsIdAndReviewStatus(goods.getId(), GoodsReviewStatus.CHANGE_REQUESTED))
 			.thenReturn(Optional.of(buildChangeRequestedDescription()));
-
-		var savedGoods = goodsService.update(goods, newDesc);
+		when(goodsRepository.findForUpdateByIdAndReleasedById(goods.getId(), currentUserId)).thenReturn(Optional.of(goods));
+		var savedGoods = goodsService.update(goods.getId(), newDesc);
 
 		var inOrder = inOrder(goodsDescriptionRepository, goodsRepository);
 		inOrder.verify(goodsDescriptionRepository).deleteByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED);
@@ -156,8 +156,9 @@ public class GoodsServiceTest {
 		var newDesc = buildDescription();
 		when(goodsDescriptionDiffer.checkDiff(oldDesc, newDesc)).thenReturn(GoodsDescriptionDiffer.Diff.NO_CHANGE);
 		when(goodsDescriptionRepository.existsByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED)).thenReturn(false);
+		when(goodsRepository.findForUpdateByIdAndReleasedById(goods.getId(), currentUserId)).thenReturn(Optional.of(goods));
 
-		goodsService.update(goods, newDesc);
+		goodsService.update(goods.getId(), newDesc);
 
 		verify(goodsDescriptionRepository, never()).save(any());
 		assertSame(oldDesc, goods.getCurrentDescription());
@@ -170,8 +171,9 @@ public class GoodsServiceTest {
 		var newDesc = buildDescription();
 		when(goodsDescriptionDiffer.checkDiff(oldDesc, newDesc)).thenReturn(diff);
 		when(goodsDescriptionRepository.existsByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED)).thenReturn(existsNotApproved);
+		when(goodsRepository.findForUpdateByIdAndReleasedById(goods.getId(), currentUserId)).thenReturn(Optional.of(goods));
 
-		var savedGoods = goodsService.update(goods, newDesc);
+		var savedGoods = goodsService.update(goods.getId(), newDesc);
 
 		var inOrder = inOrder(goodsDescriptionRepository, goodsRepository);
 		inOrder.verify(goodsDescriptionRepository).deleteByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED);
@@ -203,8 +205,9 @@ public class GoodsServiceTest {
 		when(goodsDescriptionDiffer.checkDiff(oldDesc, newDesc)).thenReturn(GoodsDescriptionDiffer.Diff.NEED_REVIEW);
 		when(goodsDescriptionRepository.findByGoodsIdAndReviewStatus(goods.getId(), GoodsReviewStatus.CHANGE_REQUESTED))
 			.thenReturn(Optional.of(buildChangeRequestedDescription()));
+		when(goodsRepository.findForUpdateByIdAndReleasedById(goods.getId(), currentUserId)).thenReturn(Optional.of(goods));
 
-		var savedGoods = goodsService.update(goods, newDesc);
+		var savedGoods = goodsService.update(goods.getId(), newDesc);
 
 		var inOrder = inOrder(goodsDescriptionRepository, goodsRepository);
 		inOrder.verify(goodsDescriptionRepository).deleteByGoodsIdAndReviewStatusNot(savedGoods.getId(), GoodsReviewStatus.APPROVED);

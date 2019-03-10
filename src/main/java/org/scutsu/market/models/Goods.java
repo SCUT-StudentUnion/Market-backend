@@ -37,6 +37,14 @@ import java.time.OffsetDateTime;
 		@NamedAttributeNode("category"),
 		@NamedAttributeNode("photos"),
 	}))
+@NamedEntityGraph(name = "Goods.forUpdate",
+	attributeNodes = {
+		@NamedAttributeNode(value = "currentDescription", subgraph = "description"),
+	},
+	subgraphs = @NamedSubgraph(name = "description", attributeNodes = {
+		@NamedAttributeNode("category"),
+		@NamedAttributeNode("photos"),
+	}))
 public class Goods {
 
 	@Id
