@@ -99,7 +99,8 @@ public class GoodsService {
 	}
 
 	@Transactional
-	public void reviewApprove(GoodsDescription desc) {
+	public void reviewApprove(long descriptionId) {
+		GoodsDescription desc = goodsDescriptionRepository.findForReviewById(descriptionId).orElseThrow();
 		if (desc.getReviewStatus() == GoodsReviewStatus.APPROVED) {
 			return;
 		}
@@ -127,7 +128,8 @@ public class GoodsService {
 	}
 
 	@Transactional
-	public void reviewRequestChange(GoodsDescription desc, String comment) {
+	public void reviewRequestChange(long descriptionId, String comment) {
+		GoodsDescription desc = goodsDescriptionRepository.findForReviewById(descriptionId).orElseThrow();
 		Goods goods = desc.getGoods();
 		var oldDesc = goods.getCurrentDescription();
 		if (oldDesc == desc) {

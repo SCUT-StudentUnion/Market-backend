@@ -40,6 +40,13 @@ import java.util.List;
 		@NamedAttributeNode("category"),
 		@NamedAttributeNode("photos"),
 	})
+@NamedEntityGraph(name = "GoodsDescription.forReview",
+	attributeNodes = {
+		@NamedAttributeNode(value = "goods", subgraph = "goods")
+	},
+	subgraphs = @NamedSubgraph(name = "goods", attributeNodes = {
+		@NamedAttributeNode("currentDescription"),
+	}))
 public class GoodsDescription {
 
 	@Id
@@ -65,7 +72,7 @@ public class GoodsDescription {
 	@JsonView({Views.Goods.Public.class, Views.Goods.UserAccessible.class})
 	private String detail;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonView({Views.Goods.Public.class, Views.Goods.UserAccessible.class})
 	private Category category;
 

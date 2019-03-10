@@ -67,7 +67,7 @@ public class Goods {
 	 * 当前向公众展示的描述。
 	 * <p>为{@code null}表示该商品不对公众展示。</p>
 	 */
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonView({Views.Goods.List.class, Views.Goods.Detail.class})
 	@Nullable
 	private GoodsDescription currentDescription;

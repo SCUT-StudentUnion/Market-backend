@@ -105,18 +105,18 @@ public class GoodsController {
 	@PostMapping("/{id}/review/approve")
 	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Minimum.class)
-	public GoodsDescription reviewApprove(@PathVariable("id") GoodsDescription desc) {
-		goodsService.reviewApprove(desc);
-		return desc;
+	public SuccessResult reviewApprove(@PathVariable("id") long descriptionId) {
+		goodsService.reviewApprove(descriptionId);
+		return new SuccessResult();
 	}
 
 	@PostMapping("/{id}/review/requestChange")
 	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Minimum.class)
-	public GoodsDescription reviewRequestChange(@PathVariable("id") GoodsDescription desc,
-												@RequestBody @Valid RequestChangeForm comment) {
-		goodsService.reviewRequestChange(desc, comment.getComment());
-		return desc;
+	public SuccessResult reviewRequestChange(@PathVariable("id") long descriptionId,
+											 @RequestBody @Valid RequestChangeForm comment) {
+		goodsService.reviewRequestChange(descriptionId, comment.getComment());
+		return new SuccessResult();
 	}
 
 	@Data

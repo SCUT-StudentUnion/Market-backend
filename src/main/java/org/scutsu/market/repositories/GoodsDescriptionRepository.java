@@ -22,6 +22,9 @@ public interface GoodsDescriptionRepository extends CrudRepository<GoodsDescript
 	@EntityGraph("GoodsDescription.detail")
 	Optional<GoodsDescription> findByIdAndGoodsReleasedById(long id, long releasedById);
 
+	@EntityGraph("GoodsDescription.forReview")
+	Optional<GoodsDescription> findForReviewById(long id);
+
 	void deleteByGoodsIdAndReviewStatusNot(long goodsId, GoodsReviewStatus reviewStatus);
 
 	boolean existsByGoodsIdAndReviewStatusNot(long goodsId, GoodsReviewStatus reviewStatus);

@@ -86,6 +86,7 @@ public class GoodsServiceTest {
 
 	private GoodsDescription buildDescription() {
 		var desc = new GoodsDescription();
+		desc.setId(456L);
 		desc.setCategory(new Category());
 		desc.getCategory().setId(589L);
 		return desc;
@@ -95,6 +96,7 @@ public class GoodsServiceTest {
 		var goods = new Goods();
 		goods.setId(123L);
 		var oldDesc = new GoodsDescription();
+		oldDesc.setId(456L);
 		oldDesc.setReviewStatus(GoodsReviewStatus.APPROVED);
 		oldDesc.setGoods(goods);
 		goods.setCurrentDescription(oldDesc);
@@ -237,8 +239,9 @@ public class GoodsServiceTest {
 	public void approveOffShelf() {
 		var desc = buildOffShelfPendingDescription();
 		var goods = desc.getGoods();
+		when(goodsDescriptionRepository.findForReviewById(desc.getId())).thenReturn(Optional.of(desc));
 
-		goodsService.reviewApprove(desc);
+		goodsService.reviewApprove(desc.getId());
 
 		verify(goodsDescriptionRepository).save(desc);
 		assertPublished(goods, desc);
@@ -253,8 +256,9 @@ public class GoodsServiceTest {
 		var desc = buildDescription();
 		desc.setReviewStatus(GoodsReviewStatus.PENDING);
 		desc.setGoods(goods);
+		when(goodsDescriptionRepository.findForReviewById(desc.getId())).thenReturn(Optional.of(desc));
 
-		goodsService.reviewApprove(desc);
+		goodsService.reviewApprove(desc.getId());
 
 		verifyReplace(goods, oldDesc, desc);
 		assertPublished(goods, desc);
@@ -264,8 +268,9 @@ public class GoodsServiceTest {
 	@Test
 	public void requestChange() {
 		var desc = buildOffShelfPendingDescription();
+		when(goodsDescriptionRepository.findForReviewById(desc.getId())).thenReturn(Optional.of(desc));
 
-		goodsService.reviewRequestChange(desc, reviewComment);
+		goodsService.reviewRequestChange(desc.getId(), reviewComment);
 
 		verify(goodsDescriptionRepository).save(desc);
 		assertEquals(GoodsReviewStatus.CHANGE_REQUESTED, desc.getReviewStatus());
@@ -279,8 +284,9 @@ public class GoodsServiceTest {
 		var desc = goods.getCurrentDescription();
 		assert desc != null;
 		when(goodsDescriptionRepository.existsByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED)).thenReturn(false);
+		when(goodsDescriptionRepository.findForReviewById(desc.getId())).thenReturn(Optional.of(desc));
 
-		goodsService.reviewRequestChange(desc, reviewComment);
+		goodsService.reviewRequestChange(desc.getId(), reviewComment);
 
 		verify(goodsRepository).save(goods);
 		verify(goodsDescriptionRepository).save(desc);
@@ -293,8 +299,9 @@ public class GoodsServiceTest {
 		var desc = goods.getCurrentDescription();
 		assert desc != null;
 		when(goodsDescriptionRepository.existsByGoodsIdAndReviewStatusNot(goods.getId(), GoodsReviewStatus.APPROVED)).thenReturn(true);
+		when(goodsDescriptionRepository.findForReviewById(desc.getId())).thenReturn(Optional.of(desc));
 
-		goodsService.reviewRequestChange(desc, reviewComment);
+		goodsService.reviewRequestChange(desc.getId(), reviewComment);
 
 		var inOrder = inOrder(goodsDescriptionRepository, goodsRepository);
 		inOrder.verify(goodsRepository).save(goods);
