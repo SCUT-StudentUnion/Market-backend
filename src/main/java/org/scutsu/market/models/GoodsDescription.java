@@ -29,6 +29,17 @@ import java.util.List;
  */
 @Entity
 @Data
+@NamedEntityGraph(name = "GoodsDescription.list",
+	attributeNodes = {
+		@NamedAttributeNode("goods"),
+		@NamedAttributeNode("category"),
+	})
+@NamedEntityGraph(name = "GoodsDescription.detail",
+	attributeNodes = {
+		@NamedAttributeNode("goods"),
+		@NamedAttributeNode("category"),
+		@NamedAttributeNode("photos"),
+	})
 public class GoodsDescription {
 
 	@Id
@@ -40,7 +51,7 @@ public class GoodsDescription {
 	@JsonView(Views.Goods.Self.class)
 	private Goods goods;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	@JsonView({Views.Goods.Public.class, Views.Goods.UserAccessible.class})
 	private List<Photo> photos = new ArrayList<>();
 

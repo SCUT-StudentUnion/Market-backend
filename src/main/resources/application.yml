@@ -3,7 +3,9 @@ spring:
         active: development
     jpa:
         properties:
-            hibernate.dialect: org.hibernate.dialect.MySQL57Dialect
+            hibernate:
+                dialect: org.hibernate.dialect.MySQL57Dialect
+                default_batch_fetch_size: 10
         open-in-view: false
 we-chat:
     template-message:

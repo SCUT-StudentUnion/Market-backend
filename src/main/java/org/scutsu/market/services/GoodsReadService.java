@@ -16,6 +16,7 @@ import java.util.Objects;
 
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class GoodsReadService {
 	private final GoodsRepository goodsRepository;
 	private final GoodsDescriptionRepository goodsDescriptionRepository;
@@ -69,14 +70,12 @@ public class GoodsReadService {
 		return goods;
 	}
 
-	@Transactional(readOnly = true)
 	public Page<Favorite> getFavorite(Pageable pageable) {
 		var page = favoriteRepository.findAllByCollectedById(userIdProvider.getCurrentUserId(), pageable);
 		populateGoodsPhotoUri(page.map(Favorite::getGoods));
 		return page;
 	}
 
-	@Transactional(readOnly = true)
 	public Page<GoodsDescription> getMy(Pageable pageable) {
 		var page = goodsDescriptionRepository.findAllByGoodsReleasedById(userIdProvider.getCurrentUserId(), pageable);
 		populatePhotoUri(page);

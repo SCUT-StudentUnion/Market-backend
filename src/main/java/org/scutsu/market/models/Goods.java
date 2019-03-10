@@ -20,6 +20,23 @@ import java.time.OffsetDateTime;
  */
 @Entity
 @Data
+@NamedEntityGraph(name = "Goods.publicList",
+	attributeNodes = {
+		@NamedAttributeNode(value = "currentDescription", subgraph = "description"),
+		@NamedAttributeNode("releasedBy")
+	},
+	subgraphs = @NamedSubgraph(name = "description", attributeNodes = {
+		@NamedAttributeNode("category"),
+	}))
+@NamedEntityGraph(name = "Goods.publicDetail",
+	attributeNodes = {
+		@NamedAttributeNode(value = "currentDescription", subgraph = "description"),
+		@NamedAttributeNode("releasedBy")
+	},
+	subgraphs = @NamedSubgraph(name = "description", attributeNodes = {
+		@NamedAttributeNode("category"),
+		@NamedAttributeNode("photos"),
+	}))
 public class Goods {
 
 	@Id
@@ -27,8 +44,8 @@ public class Goods {
 	@JsonView(Views.Minimum.class)
 	private Long id;
 
-	@ManyToOne
-	@JsonView(Views.Goods.Public.class)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView({Views.Goods.List.class, Views.Goods.Detail.class})
 	@NotNull
 	private User releasedBy;
 
